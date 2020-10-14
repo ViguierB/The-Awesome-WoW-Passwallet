@@ -1,0 +1,1 @@
+".win-dep\msys32\usr\bin\mintty" -o "Font=Consolas" -o "FontSize=12" -s 95,20 /usr/bin/bash --login -c "cd '%cd%'; ./passwallet.sh %*"
