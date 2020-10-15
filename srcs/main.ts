@@ -1,4 +1,7 @@
 import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+
+const isDev = true;
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -9,7 +12,13 @@ function createWindow () {
     }
   })
 
-  win.loadFile('../html/index.html');
+  //win.loadFile('../html/build/index.html');
+  if (isDev) {
+    win.loadURL('http://localhost:3000/');
+  } else {
+    win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+  }
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow)
