@@ -9,7 +9,11 @@
 - Install the project and its dependencies by running
 
 ```bash
-git clone https://gitlab.holidev.net/ben/the-awesome-wow-passwallet.git && npm i
+DIRNAME="wow-passwallet";
+git clone https://gitlab.holidev.net/ben/the-awesome-wow-passwallet.git "$DIRNAME" && (
+  cd "$DIRNAME"; npm i
+);
+cd "$DIRNAME"
 ```
 
 ### Build
