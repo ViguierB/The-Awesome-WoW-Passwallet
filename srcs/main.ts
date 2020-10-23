@@ -17,10 +17,11 @@ function createWindow () {
   //win.loadFile('../html/build/index.html');
   if (isDev) {
     win.loadURL('http://localhost:3000/');
+    win.webContents.openDevTools();
   } else {
     win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+    win.removeMenu();
   }
-  win.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow)

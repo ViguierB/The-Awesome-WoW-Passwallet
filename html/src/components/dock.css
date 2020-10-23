@@ -34,7 +34,7 @@ ul.pw-dock {
   margin: auto 15px;
 }
 
-.pw-dock li .text-container i {
+.pw-dock li .text-container span {
   text-transform: uppercase;
   color: beige;
   cursor: auto;

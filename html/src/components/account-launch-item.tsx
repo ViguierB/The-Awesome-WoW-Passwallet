@@ -5,12 +5,14 @@ import deleteIcon from "../assets/delete.svg";
 import { ReactComponent as DeleteIcon } from "../assets/delete.svg";
 import { ReactComponent as EditIcon } from "../assets/edit.svg";
 import { ReactComponent as PlayIcon } from "../assets/play.svg";
+import modalService from '../services/modal-service';
 
 export type AccountLaunchItemProps = {
   name: string
 };
 
 export default class AccountLaunchItem extends Component<AccountLaunchItemProps, {}> {
+
 
   render() {
     return (

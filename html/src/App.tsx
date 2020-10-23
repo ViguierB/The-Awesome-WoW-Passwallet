@@ -5,6 +5,7 @@ import { Home } from './pages/home';
 import homeIcon from './assets/logo-passwallet.svg';
 import settingsIcon from './assets/settings.svg';
 import gen from './misc/very-simple-key-generator';
+import ModalContext from './components/modal-context';
 
 const dockItems = [
   { text: 'Home', icon: homeIcon },
@@ -21,6 +22,8 @@ function App() {
       <div className="pw-home">
         <Home />
       </div>
+
+      <ModalContext />
     </div>
   );
 }

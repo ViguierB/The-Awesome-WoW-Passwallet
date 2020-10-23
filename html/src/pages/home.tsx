@@ -2,7 +2,10 @@ import React from "react";
 import { Component } from "react";
 import AccountLaunchList from "../components/account-launch-list";
 import gen from '../misc/very-simple-key-generator';
+import { ReactComponent as AddIcon } from "../assets/add.svg";
 import './home.css';
+import modalService from '../services/modal-service';
+import AccountModal from '../components/account-modal';
 
 const accounts = [
   { name: 'Account 1' },
@@ -15,10 +18,19 @@ const accounts = [
 
 export class Home extends Component {
 
+  onAddButtonClicked() {
+    modalService.openModal(<AccountModal item={null} />).then(() => {
+      
+    })
+  }
+
   render() {
     return <div id="home-page">
       <div id='accounts-container'>
         <AccountLaunchList items={ accounts } />
+      </div>
+      <div className='button-add' onClick={ this.onAddButtonClicked.bind(this) }>
+        <AddIcon className='icon' />
       </div>
     </div>
   }

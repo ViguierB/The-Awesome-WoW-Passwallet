@@ -20,7 +20,7 @@ export default class Dock extends Component<DockProps, {}> {
                 <img src={ item.icon } />
               </div>
               <div className="text-container">
-                <i> { item.text } </i>
+                <span> { item.text } </span>
               </div>
             </li>
           ))

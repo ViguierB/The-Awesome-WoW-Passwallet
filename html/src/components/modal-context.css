@@ -1,0 +1,29 @@
+#pw-modal-context {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  transition-timing-function: ease;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#pw-modal-context #modal-main {
+  margin: auto;
+  background-color: #444444;
+  border-radius: 8px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  animation: pop ease;
+  overflow: hidden;
+}
