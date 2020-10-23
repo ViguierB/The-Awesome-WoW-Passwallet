@@ -4,14 +4,7 @@ import Dock from './components/dock';
 import { Home } from './pages/home';
 import homeIcon from './assets/logo-passwallet.svg';
 import settingsIcon from './assets/settings.svg';
-
-class IdGenerator {
-  private _lastid = 0;
-
-  public get() { return ++this._lastid; }
-}
-
-const gen = new IdGenerator();
+import gen from './misc/very-simple-key-generator';
 
 const dockItems = [
   { text: 'Home', icon: homeIcon },

@@ -1,20 +1,16 @@
 import React from "react";
 import { Component } from "react";
 import AccountLaunchList from "../components/account-launch-list";
+import gen from '../misc/very-simple-key-generator';
 import './home.css';
-
-class IdGenerator {
-  private _lastid = 0;
-
-  public get() { return ++this._lastid; }
-}
-
-const gen = new IdGenerator();
 
 const accounts = [
   { name: 'Account 1' },
   { name: 'Account 2' },
-  { name: 'Account 3' }
+  { name: 'Account 3' },
+  { name: 'Account 4' },
+  { name: 'Account 5' },
+  { name: 'Account 6' }
 ].map(i => Object.assign(i, { key: gen.get() }));
 
 export class Home extends Component {
