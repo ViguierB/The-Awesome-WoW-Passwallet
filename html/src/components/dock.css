@@ -1,0 +1,41 @@
+ul.pw-dock {
+  margin: 0;
+  padding: 0;
+}
+
+.pw-dock li {
+  list-style-type: none;
+  display: flex;
+  transition: background-color .3s ease;
+}
+
+.pw-dock li:hover {
+  background-color: rgb(67, 67, 67);
+}
+
+.pw-dock li .icon-container {
+  border-radius: 50%;
+  height: 65px;
+  width: 65px;
+  margin: 10px 5px;
+  display: flex;
+  background-color: #272525;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.pw-dock li .icon-container img {
+  width: 40px;
+  margin: auto;
+}
+
+.pw-dock li .text-container {
+  flex-shrink: 0;
+  margin: auto 15px;
+}
+
+.pw-dock li .text-container span {
+  text-transform: uppercase;
+  color: beige;
+  cursor: auto;
+}

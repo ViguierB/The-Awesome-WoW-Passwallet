@@ -1,15 +1,27 @@
 import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+
+const isDev = true;
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 815,
+    height: 430,
+    minWidth: 450,
+    minHeight: 250,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  win.loadFile('../html/index.html');
+  //win.loadFile('../html/build/index.html');
+  if (isDev) {
+    win.loadURL('http://localhost:3000/');
+    win.webContents.openDevTools();
+  } else {
+    win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+    win.removeMenu();
+  }
 }
 
 app.whenReady().then(createWindow)
