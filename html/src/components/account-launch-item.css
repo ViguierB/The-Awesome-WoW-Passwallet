@@ -46,17 +46,18 @@
 .pw-account-item .icon-container {
   height: 100%;
   display: flex;
+  cursor: pointer;
 }
 
 .pw-account-item .icon {
   width: 20px;
   margin: auto 15px;
   fill: rgb(223, 223, 223);
-  transition: filter .3s ease;
+  transition: filter .2s ease;
 }
 
 .pw-account-item .icon-container:hover .icon {
-  filter: drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7));
+  filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, .7));
 }
 
 .pw-account-item .delete-button {
