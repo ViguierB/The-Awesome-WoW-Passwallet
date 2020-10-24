@@ -7,15 +7,20 @@ import { ReactComponent as EditIcon } from "../assets/edit.svg";
 import { ReactComponent as PlayIcon } from "../assets/play.svg";
 import modalService from '../services/modal-service';
 import AccountModal from "./account-modal";
+import AccountDeleteModal from "./account-delete-modal";
 
 export type AccountLaunchItemProps = {
-  name: string
+  name: string, email: string
 };
 
 export default class AccountLaunchItem extends Component<AccountLaunchItemProps, {}> {
 
   onEditButtonClicked() {
-    modalService.openModal(<AccountModal item={this.props.name} />).then(() => {});
+    modalService.openModal(<AccountModal item={this.props} />).then(() => {});
+  }
+
+  onDeleteButtonClicked() {
+    modalService.openModal(<AccountDeleteModal item={this.props} />).then(() => {});
   }
 
   render() {
@@ -24,7 +29,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
         <div className='main-container'>
           <div className='text-container'>
             <div className='container-left-button'>
-              <div className='icon-container delete-button'>
+              <div className='icon-container delete-button' onClick={() => this.onDeleteButtonClicked()}>
                 <DeleteIcon className='icon delete-icon'/>
               </div>
               <div className='icon-container edit-button' onClick={() => this.onEditButtonClicked()}>

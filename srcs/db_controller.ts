@@ -40,6 +40,9 @@ class DBHandle {
 
   public updateAccount(name: string, content: dbItemType, creat: boolean = false) {
     if ((!this._db[name] && creat === true) || !!this._db[name]) {
+      if (content.password === '') {
+        content.password = this._db[name]?.password || "";
+      }
       this._db[name] = {
         email: content.email,
         password: content.password
@@ -61,17 +64,18 @@ class DBHandle {
   }
 
   public remove(name: string) {
-    if (!this._db[name]) {
+    if (!!this._db[name]) {
       delete this._db[name]
     } else {
       throw new DBControllerNotFoundException("This account is not found");
     }
   }
 
-  public getFriendlyArray() {
-    return Object.keys(this._db).map(key => {
-      
-    });
+  public getArrayForRender() {
+    return Object.keys(this._db).map(key => ({
+      name: key,
+      email: this._db[key].email
+    }));
   }
 
   public getBuffer() {
