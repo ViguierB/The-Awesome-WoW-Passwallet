@@ -5,7 +5,7 @@
 
 #modal-account header {
   display: flex;
-  padding-bottom: 25px;
+  padding-bottom: 10px;
 }
 
 #modal-account header .modal-close {

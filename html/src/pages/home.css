@@ -20,6 +20,7 @@
   background-color: #5362ce;
   box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.45);
   cursor: pointer;
+  z-index: 10;
 }
 
 #home-page .button-add .icon {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement, ReactHTMLElement } from "react";
 import { Component } from "react";
 import './dock.css';
 
@@ -14,16 +14,18 @@ export default class Dock extends Component<DockProps, {}> {
     return (
       <ul className="pw-dock">
         { 
-          items.map(item => (
-            <li key={item.key} className="pw-dock-element">
-              <div className='icon-container'>
-                <img src={ item.icon } />
-              </div>
-              <div className="text-container">
-                <span> { item.text } </span>
-              </div>
-            </li>
-          ))
+          items.map(item => {
+            return (
+              <li key={item.key} className="pw-dock-element">
+                <div className='icon-container'>
+                  { item.icon }
+                </div>
+                <div className="text-container">
+                  <span> { item.text } </span>
+                </div>
+              </li>
+            )
+          })
         }
       </ul>
     );

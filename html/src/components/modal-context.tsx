@@ -5,7 +5,7 @@ import "./modal-context.css";
 
 export default class ModalContext extends Component {
 
-  private _transistionDuration = 500;
+  private _transistionDuration = 300;
 
   constructor(props: any) {
     super(props);
