@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import DBControllerKeytar from './db_controller_keytar';
+import { DB } from './db';
 
 const isDev = process.env.IS_DEV === 'true';
 
@@ -24,62 +24,9 @@ function createWindow () {
     win.removeMenu();
   }
 
-  const db = new DBControllerKeytar;
-
-  ipcMain.once('on-ipc-service-ready', () => {
-
-    db.open('test.db').then((handle) => {
-
-      ipcMain.on('on-ipc-service-ready', () => {
-        win.webContents.send('on-db-opened');
-      })
-
-      ipcMain.handle('get-db', async (_event, _someArgument) => {
-        return handle.getArrayForRender();
-      })
-
-      ipcMain.handle('update-db', async (_event, payload) => {
-        switch (payload.command) {
-          case "update": {
-            if (payload.name === payload.lastName) {
-              handle.updateAccount(payload.name, {
-                email: payload.email,
-                password: payload.password
-              }); 
-            } else {
-              handle.remove(payload.lastName);
-              handle.create(payload.name, {
-                email: payload.email,
-                password: payload.password
-              }); 
-            }
-          }; break;
-          case "add": {
-            handle.create(payload.name, {
-              email: payload.email,
-              password: payload.password
-            }); 
-          }; break;
-          case "remove": {
-            handle.remove(payload.name)
-          }; break;
-          default: console.error("unkown payload command"); break;
-        }
-        win.webContents.send('on-db-edited');
-        return;
-      });
-      
-      win.webContents.send('on-db-opened');
-
-      win.on('close', () => {
-        db.save('test.db', handle).then(() => console.log('database saved'));
-      });
-    });
-
-    
-
-  })
-
+  const db = new DB(win);
+  
+  win.on('close', db.close.bind(db));
 }
 
 app.whenReady().then(createWindow)
