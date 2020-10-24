@@ -26,5 +26,5 @@ npm run build
 npm start
 
 ## Build & run
-npm run build && npm start
+npm run build && IS_DEV npm start
 ```

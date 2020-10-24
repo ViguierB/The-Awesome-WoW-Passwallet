@@ -15,9 +15,7 @@ export type AccountLaunchItemProps = {
 export default class AccountLaunchItem extends Component<AccountLaunchItemProps, {}> {
 
   onEditButtonClicked() {
-    modalService.openModal(<AccountModal item={this.props.name} />).then(() => {
-      
-    })
+    modalService.openModal(<AccountModal item={this.props.name} />).then(() => {});
   }
 
   render() {

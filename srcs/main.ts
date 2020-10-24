@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 
-const isDev = true;
+const isDev = process.env.IS_DEV === 'true';
 
 function createWindow () {
   const win = new BrowserWindow({
