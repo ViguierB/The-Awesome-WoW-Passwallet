@@ -12,16 +12,22 @@ type dbType = {
   [account_name: string]: dbItemType
 }
 
-class DBControllerAlreadyExistExeption {
+class DBControllerAlreadyExistException {
   constructor(private _message: string) {}
 
-  public toString() { return `DBControllerAlreadyExistExeption: ${this._message}`; }
+  public toString() { return `DBControllerAlreadyExistException: ${this._message}`; }
 }
 
-class DBControllerNotFoundExeption {
+class DBControllerBadTypeException {
   constructor(private _message: string) {}
 
-  public toString() { return `DBControllerNotFoundExeption: ${this._message}`; }
+  public toString() { return `DBControllerBadTypeException: ${this._message}`; }
+}
+
+class DBControllerNotFoundException {
+  constructor(private _message: string) {}
+
+  public toString() { return `DBControllerNotFoundException: ${this._message}`; }
 }
 
 class DBHandle {
@@ -39,7 +45,7 @@ class DBHandle {
         password: content.password
       };
     } else {
-      throw new DBControllerNotFoundExeption("This account is not found, if you want to create it: turn creat parameter to true");
+      throw new DBControllerNotFoundException("This account is not found, if you want to create it: turn creat parameter to true");
     }
   }
 
@@ -50,7 +56,7 @@ class DBHandle {
         password: content.password
       };
     } else {
-      throw new DBControllerAlreadyExistExeption("This account alredy exist, you must use updateAccount()");
+      throw new DBControllerAlreadyExistException("This account alredy exist, you must use updateAccount()");
     }
   }
 
@@ -58,7 +64,7 @@ class DBHandle {
     if (!this._db[name]) {
       delete this._db[name]
     } else {
-      throw new DBControllerNotFoundExeption("This account is not found");
+      throw new DBControllerNotFoundException("This account is not found");
     }
   }
 
@@ -80,6 +86,7 @@ export default abstract class DBController {
   private _iv = crypto.createHash("sha256").update('badiv').digest();
 
   protected abstract async getSecret(): Promise<string>;
+  protected abstract getType(): string;
 
   private async _lock(buffer: Buffer) {
     const secret = await this.getSecret();
@@ -90,10 +97,13 @@ export default abstract class DBController {
 
     const c = Buffer.concat([ cipher.update(buffer), cipher.final() ]);
 
-    return { iv: iv.toString('base64'), c: c.toString('base64'), e: 'base64' };
+    return { iv: iv.toString('base64'), c: c.toString('base64'), e: 'base64', t: this.getType() };
   }
 
-  private async _unlock(locked: { iv: string, c: string, e: string }) {
+  private async _unlock(locked: { iv: string, c: string, e: string, t: string }) {
+    if (locked.t !== this.getType()) {
+      throw new DBControllerBadTypeException(`Controller type is not matching (expected '${this.getType()}', got '${locked.t}'`);
+    }
     const secret = await this.getSecret();
     const iv = Buffer.from(locked.iv, locked.e as any);
     const buffer = Buffer.from(locked.c, locked.e as any);

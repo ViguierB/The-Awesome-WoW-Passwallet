@@ -8,6 +8,8 @@ const serviceName = 'the-amazing-wow-passwallet-service'
 
 export default class DBControllerKeytar extends DBController {
 
+  protected getType() { return 'account-defined'; }
+
   protected async getSecret() {
     let key = await keytar.getPassword(serviceName, username);
 
