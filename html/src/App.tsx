@@ -2,13 +2,14 @@ import React from 'react';
 import './App.css';
 import Dock from './components/dock';
 import { Home } from './pages/home';
-import homeIcon from './assets/logo-passwallet.svg';
-import settingsIcon from './assets/settings.svg';
+import { ReactComponent as HomeIcon } from './assets/logo-passwallet.svg';
+import { ReactComponent as SettingsIcon } from './assets/settings.svg';
 import gen from './misc/very-simple-key-generator';
+import ModalContext from './components/modal-context';
 
 const dockItems = [
-  { text: 'Home', icon: homeIcon },
-  { text: 'Settings', icon: settingsIcon }
+  { text: 'Home', icon: <HomeIcon /> },
+  { text: 'Settings', icon: <SettingsIcon /> }
 ].map(i => Object.assign(i, { key: gen.get() }));
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
       <div className="pw-home">
         <Home />
       </div>
+
+      <ModalContext />
     </div>
   );
 }

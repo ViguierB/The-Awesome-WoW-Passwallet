@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import { DB } from './db';
 
-const isDev = true;
+const isDev = process.env.IS_DEV === 'true';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -17,18 +18,25 @@ function createWindow () {
   //win.loadFile('../html/build/index.html');
   if (isDev) {
     win.loadURL('http://localhost:3000/');
+    win.webContents.openDevTools();
   } else {
     win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+    win.removeMenu();
   }
-  win.webContents.openDevTools();
+
+  const db = new DB(win);
+  
+  win.on('close', db.close.bind(db));
 }
 
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  setTimeout(() => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  }, 250)
 })
 
 app.on('activate', () => {

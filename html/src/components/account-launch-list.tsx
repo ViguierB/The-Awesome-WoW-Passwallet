@@ -19,7 +19,7 @@ export default class AccountLaunchList extends Component<AccountLaunchListProps,
             listStyleType: 'none',
             margin: '15px 5px'
           }} key={item.key}>
-            <AccountLaunchItem name={ item.name } />
+            <AccountLaunchItem name={ item.name } email={ item.email } />
           </li>
         ))
       }</ul>
