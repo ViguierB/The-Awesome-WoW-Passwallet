@@ -1,7 +1,21 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
+import DBControllerKeytar from './db_controller_keytar';
 
 const isDev = process.env.IS_DEV === 'true';
+
+const db = new DBControllerKeytar;
+
+db.open('test.db').then((handle) => {
+  handle.updateAccount('unepommedeterre', {
+    email: "patate@patae.com",
+    password: "test"
+  }, true);
+
+  setTimeout(() => {
+    db.save('test.db', handle);
+  }, 1000);
+});
 
 function createWindow () {
   const win = new BrowserWindow({
