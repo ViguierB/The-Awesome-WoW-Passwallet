@@ -87,7 +87,6 @@ class DBHandle {
 export default abstract class DBController {
 
   private _algorithm = 'aes-256-cbc';
-  private _iv = crypto.createHash("sha256").update('badiv').digest();
 
   protected abstract async getSecret(): Promise<string>;
   protected abstract getType(): string;

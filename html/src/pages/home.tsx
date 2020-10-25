@@ -22,6 +22,7 @@ export class Home extends Component<{}, HomeState> {
 
     dbService.dbOpened.subcribe(this.onDbChange.bind(this));
     dbService.dbEdited.subcribe(this.onDbChange.bind(this));
+    this.onDbChange(null);
   }
 
   private onDbChange(_handle: any) {
