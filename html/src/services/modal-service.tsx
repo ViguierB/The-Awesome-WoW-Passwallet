@@ -1,5 +1,4 @@
-import { resolve } from 'dns';
-import { Component, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import ModalContext from '../components/modal-context';
 import gen from '../misc/very-simple-key-generator';
 

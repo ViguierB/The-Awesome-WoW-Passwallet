@@ -1,5 +1,4 @@
 import Emitter from '../misc/emitter';
-import gen from '../misc/very-simple-key-generator'
 
 declare global {
   interface Window {
@@ -13,12 +12,8 @@ class SettingsService {
 
   public settingUpdated = new Emitter<void>();
 
-  constructor() {
-
-  }
-
   updateSettings(data: { [key: string]: any } ) {
-    return this._ipc.invoke('update-settings', data).then((d: any) => (this.settingUpdated.emit(), d));
+    return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
   }
 
   getSettings() {
