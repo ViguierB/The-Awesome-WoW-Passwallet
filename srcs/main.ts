@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import { Settings } from './settings';
 import { DB } from './db';
 
 const isDev = process.env.IS_DEV === 'true';
@@ -25,6 +26,9 @@ function createWindow () {
   }
 
   const db = new DB(win);
+  const settings = new Settings(win);
+
+  settings.open('settings.json');
   
   win.on('close', db.close.bind(db));
 }
