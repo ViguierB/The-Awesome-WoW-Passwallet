@@ -44,7 +44,7 @@ npm run build
 ## start front http server in background
 ( cd html && npm start ) & frontpid=$!
 
-npm start
+npm run start-dev
 
 ## kill the http server
 kill $frontpid;

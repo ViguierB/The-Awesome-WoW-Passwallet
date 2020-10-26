@@ -33,7 +33,6 @@ class DBService {
     return this._ipc.invoke('get-db') as Promise<Array<{name: string, email: string}>>;
   }
 
-
   public async addUser(name: string, email: string, password: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
     return this._ipc.invoke('update-db', { name, email, password, command: 'add'})

@@ -7,12 +7,21 @@ import { ReactComponent as PlayIcon } from "../assets/play.svg";
 import modalService from '../services/modal-service';
 import AccountModal from "./account-modal";
 import AccountDeleteModal from "./account-delete-modal";
+import executorService from '../services/executor-service';
 
 export type AccountLaunchItemProps = {
   name: string, email: string
 };
 
-export default class AccountLaunchItem extends Component<AccountLaunchItemProps, {}> {
+export default class AccountLaunchItem extends Component<AccountLaunchItemProps, { launchInProgress: boolean }> {
+
+  constructor(props: AccountLaunchItemProps) {
+    super(props);
+
+    this.state = {
+      launchInProgress: false
+    }
+  }
 
   onEditButtonClicked() {
     modalService.openModal(<AccountModal item={this.props} />).then(() => {});
@@ -20,6 +29,24 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
 
   onDeleteButtonClicked() {
     modalService.openModal(<AccountDeleteModal item={this.props} />).then(() => {});
+  }
+
+  // onStartButtonClicked() {
+  //   if (this.state.launchInProgress) { return; }
+  //   this.setState({
+  //     launchInProgress: true
+  //   })
+  //   executorService.launchWowForUser(this.props.name).then(() => {
+  //     this.setState({
+  //       launchInProgress: false
+  //     });
+  //   });
+  // }
+
+  onStartButtonClicked() {
+    this.setState({
+      launchInProgress: !this.state.launchInProgress
+    })
   }
 
   render() {
@@ -37,8 +64,13 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
             </div>
             <span> { this.props.name } </span>
           </div>
-          <div className='icon-container play-button'>
-            <PlayIcon className='icon play-icon'/>
+          <div className='icon-container play-button' onClick={() => this.onStartButtonClicked()}>
+            <PlayIcon className={(this.state.launchInProgress ? 'hidden' : '') + ' icon play-icon hide-anim'} />
+            <div className={(this.state.launchInProgress ? '' : 'hidden') + ' loader hide-anim'}>
+              <div className='lds-ellipsis'>
+                <div></div><div></div><div></div><div></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -18,7 +18,9 @@ function createWindow () {
     minWidth: 450,
     minHeight: 250,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableWebSQL: false,
+      webgl: false
     }
   })
 
@@ -44,9 +46,8 @@ function createWindow () {
 
       ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
         const ExecutorCtor = selectExecutor();
-
         const ex = new ExecutorCtor(settings, db.getHandle());
-
+        
         await ex.start(user);
 
         return;
