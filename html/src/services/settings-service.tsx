@@ -12,6 +12,15 @@ class SettingsService {
 
   public settingUpdated = new Emitter<void>();
 
+
+  // constructor() {
+
+  //   // this._ipc.on('on-settings-opened', (_e: any) => {
+  //   //   this.settingUpdated.emit();
+  //   // });
+
+  // }
+
   updateSettings(data: { [key: string]: any } ) {
     return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
   }

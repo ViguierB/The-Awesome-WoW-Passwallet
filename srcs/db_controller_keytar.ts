@@ -6,9 +6,11 @@ import * as crypto from 'crypto';
 const username = os.userInfo().username
 const serviceName = 'the-amazing-wow-passwallet-service'
 
+export const controllerType = 'account-defined';
+
 export default class DBControllerKeytar extends DBController {
 
-  protected getType() { return 'account-defined'; }
+  protected getType() { return controllerType; }
 
   protected async getSecret() {
     let key = await keytar.getPassword(serviceName, username);

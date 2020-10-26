@@ -10,7 +10,7 @@ type SettingsPageState = {
 
 export class SettingsPage extends Component<{}, SettingsPageState> {
 
-  private _attenuator = new AttenuateEventTrigger(2500);
+  private _attenuator = new AttenuateEventTrigger(1500);
 
   private onDataChange = this._attenuator.wrap((data) => {
     console.log('test');
@@ -24,13 +24,16 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
       wowPath: ""
     }
 
-    settingsService.settingUpdated.subcribe(async () => {
-      const settings = await settingsService.getSettings();
-      this.setState({ 
-        wowPath: settings.wowPath
-       })
-    })
+    settingsService.settingUpdated.subcribe(this.refreshSettings.bind(this));
+    settingsService.getSettings().then(this.refreshSettings.bind(this));
 
+  }
+
+  private async refreshSettings() {
+    const settings = await settingsService.getSettings();
+    this.setState({ 
+      wowPath: settings.wowPath
+    })
   }
 
   private onPathChange(e: any) {
