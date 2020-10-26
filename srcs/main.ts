@@ -1,9 +1,10 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { Settings } from './settings';
 import { DB } from './db';
 import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
 import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
+import { selectExecutor } from './executor';
 
 const isDev = process.env.IS_DEV === 'true';
 
@@ -40,6 +41,17 @@ function createWindow () {
     })
 
     db.open().then(() => {
+
+      ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
+        const ExecutorCtor = selectExecutor();
+
+        const ex = new ExecutorCtor(settings, db.getHandle());
+
+        await ex.start(user);
+
+        return;
+      });
+
       if (isDev) {
         win.loadURL('http://localhost:3000/');
         win.webContents.openDevTools();
@@ -55,8 +67,6 @@ function createWindow () {
     });
   })
 
-  
-  
 }
 
 app.whenReady().then(createWindow)

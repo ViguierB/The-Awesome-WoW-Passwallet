@@ -30,7 +30,7 @@ class DBControllerNotFoundException {
   public toString() { return `DBControllerNotFoundException: ${this._message}`; }
 }
 
-class DBHandle {
+export class DBHandle {
 
   constructor(private _db: dbType) {}
 

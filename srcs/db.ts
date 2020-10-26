@@ -16,6 +16,10 @@ export class DB {
     this._db = new ctor();
   }
 
+  public getHandle() {
+    return this._handle;
+  }
+
   public async open() {
     if (!this._db) {
       throw new Error('DBController not init');
