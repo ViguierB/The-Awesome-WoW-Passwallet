@@ -1,7 +1,6 @@
 import React from "react";
 import { Component } from "react";
 import "./account-launch-item.css";
-import deleteIcon from "../assets/delete.svg";
 import { ReactComponent as DeleteIcon } from "../assets/delete.svg";
 import { ReactComponent as EditIcon } from "../assets/edit.svg";
 import { ReactComponent as PlayIcon } from "../assets/play.svg";

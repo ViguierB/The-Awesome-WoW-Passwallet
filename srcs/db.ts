@@ -1,45 +1,45 @@
 import { BrowserWindow, ipcMain } from "electron";
 import DBControllerKeytar from "./db_controller_keytar";
 import DBController from './db_controller';
+import DBControllerUserPassword from './db_controller_user_password';
 
 export class DB {
 
   private _handle: any = null;
   private _db: DBController;
 
-  constructor(private _win: BrowserWindow) {
-
-    this._db = new DBControllerKeytar;
-
-    ipcMain.once('on-ipc-service-ready', () => {
-
-      this._db.open('test.db').then((handle) => {
-
-        this._handle = handle;
-
-        ipcMain.on('on-ipc-service-ready', () => {
-          this._win.webContents.send('on-db-opened');
-        })
-
-        ipcMain.handle('get-db', async (_event, _someArgument) => {
-          return handle.getArrayForRender();
-        })
-
-        ipcMain.handle('update-db', (e, p) => this._updateDBEventasync(handle, e, p))
-        
-        this._win.webContents.send('on-db-opened');
-      });
-    })
-
+  constructor(private _win: BrowserWindow, private _filename: string) {
+    this._db = null as any;
   }
 
-  close() {
+  public changeController(ctor: typeof DBControllerKeytar | typeof DBControllerUserPassword) {
+    this._db = new ctor();
+  }
+
+  public async open() {
+    if (!this._db) {
+      throw new Error('DBController not init');
+    }
+
+    const handle = await this._db.open(this._filename);
+    this._handle = handle;
+    ipcMain.on('on-ipc-service-ready', () => {
+      this._win.webContents.send('on-db-opened');
+    });
+    ipcMain.handle('get-db', async (_event, _someArgument) => {
+      return handle.getArrayForRender();
+    });
+    ipcMain.handle('update-db', (e, p) => this._updateDBEvent(handle, e, p));
+    this._win.webContents.send('on-db-opened');
+  }
+
+  public save() {
     if (!!this._handle) {
-      this._db.save('test.db', this._handle).then(() => console.log('database saved'));
+      this._db.save(this._filename, this._handle).then(() => console.log('database saved'));
     };
   }
 
-  private _updateDBEventasync(handle: any, _event: Electron.IpcMainInvokeEvent, payload: any) {
+  private _updateDBEvent(handle: any, _event: Electron.IpcMainInvokeEvent, payload: any) {
     switch (payload.command) {
       case "update": {
         if (payload.name === payload.lastName) {
@@ -66,6 +66,7 @@ export class DB {
       }; break;
       default: console.error("unkown payload command"); break;
     }
+    this.save();
     this._win.webContents.send('on-db-edited');
     return;
   }

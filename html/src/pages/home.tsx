@@ -10,7 +10,8 @@ import AccountModal from '../components/account-modal';
 import dbService from '../services/db-service';
 
 type HomeState = {
-  accounts: ({ name: string, email: string } & { key: number })[]
+  accounts: ({ name: string, email: string } & { key: number })[],
+  ready: boolean,
 }
 
 export class Home extends Component<{}, HomeState> {
@@ -18,14 +19,17 @@ export class Home extends Component<{}, HomeState> {
   constructor(props: any) {
     super(props);
 
-    this.state = { accounts: [] };
+    this.state = { accounts: [], ready: false };
 
     dbService.dbOpened.subcribe(this.onDbChange.bind(this));
     dbService.dbEdited.subcribe(this.onDbChange.bind(this));
+    this.onDbChange(null).then(() => {
+      this.setState({ ready: true });
+    });
   }
 
   private onDbChange(_handle: any) {
-    dbService.getDB().then(accounts => {
+    return dbService.getDB().then(accounts => {
       this.setState({ accounts: accounts.map(i => Object.assign(i, { key: gen.get() })) });
     });
   }
@@ -37,6 +41,10 @@ export class Home extends Component<{}, HomeState> {
   }
 
   render() {
+    if (this.state.ready === false) {
+      return null
+    }
+
     return <div id="home-page">
       <div id='accounts-container'>
         <AccountLaunchList items={ this.state.accounts } />

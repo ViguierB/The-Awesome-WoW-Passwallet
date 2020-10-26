@@ -1,4 +1,5 @@
 /dist/
 /node_modules/
 
-test.db
+accounts.db
+settings.json

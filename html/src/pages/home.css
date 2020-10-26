@@ -51,12 +51,12 @@
 }
 
 #home-page .button-add .empty-list .arrow-icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   margin: auto;
   fill: rgb(223, 223, 223);
   flex-shrink: 0;
-  margin-left: 50px;
+  margin-left: 60px;
   animation: infinite alternate arrow_anim ease .7s;
 }
 

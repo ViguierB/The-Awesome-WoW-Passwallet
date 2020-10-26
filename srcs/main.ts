@@ -1,8 +1,14 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
+import { Settings } from './settings';
 import { DB } from './db';
+import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
+import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
 
 const isDev = process.env.IS_DEV === 'true';
+
+const dbFilePath = 'accounts.db';
+const settingsFilePath = 'settings.json';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -15,18 +21,42 @@ function createWindow () {
     }
   })
 
-  //win.loadFile('../html/build/index.html');
-  if (isDev) {
-    win.loadURL('http://localhost:3000/');
-    win.webContents.openDevTools();
-  } else {
-    win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
-    win.removeMenu();
-  }
+  const db = new DB(win, dbFilePath);
+  const settings = new Settings(win, db, settingsFilePath);
 
-  const db = new DB(win);
+  settings.open().catch((e) => {
+    console.error(e);
+    app.quit();
+  }).then(() => {
+    [
+      { type: controllerKeytarType, ctor: DBControllerKeytar },
+      { type: controllerUserPasswordType, ctor: DBControllerUserPassword }
+    ].some((v) => {
+      if (v.type === settings.settings.dbSecretProvider) {
+        db.changeController(v.ctor);
+        return false;
+      }
+      return true;
+    })
+
+    db.open().then(() => {
+      if (isDev) {
+        win.loadURL('http://localhost:3000/');
+        win.webContents.openDevTools();
+      } else {
+        win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+        win.removeMenu();
+      }
+    })
+
+    win.on('close', async () => {
+      settings.save()
+      db.save()
+    });
+  })
+
   
-  win.on('close', db.close.bind(db));
+  
 }
 
 app.whenReady().then(createWindow)
