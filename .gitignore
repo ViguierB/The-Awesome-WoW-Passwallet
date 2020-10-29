@@ -1,6 +1,7 @@
 /dist/
 /build/
 /node_modules/
+/bin
 
 accounts.db
 settings.json
