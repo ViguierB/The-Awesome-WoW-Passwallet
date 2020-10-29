@@ -66,6 +66,10 @@ Napi::Value NativeExecutorForLinux::waitForWoWReady(const Napi::CallbackInfo &in
 Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){
     Napi::Env env = info.Env();
 
+    // pw::Timer::once(this->_main_loop, [] {
+    //   std::cout << "test Timer::once" << std::endl;
+    // }, 1000);
+
     this->_options.file = (const char*)"wine";
     this->_options.cwd = this->_workingDir.c_str();
     this->_options.exit_cb = &NativeExecutorCommon::onChildExit;
