@@ -17,6 +17,7 @@
 
 #modal-delete-account header .modal-title {
   margin-right: auto;
+  text-transform: uppercase;
 }
 
 #modal-delete-account header .modal-title, #modal-delete-account header .modal-close {

@@ -4,7 +4,8 @@ import { Settings } from './settings';
 import { DB } from './db';
 import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
 import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
-import { selectExecutor } from './executor';
+import { Executor } from './executor';
+
 
 const isDev = process.env.IS_DEV === 'true';
 
@@ -43,15 +44,20 @@ function createWindow () {
     })
 
     db.open().then(() => {
+      // ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
 
-      ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
-        const ExecutorCtor = selectExecutor();
-        const ex = new ExecutorCtor(settings, db.getHandle());
-        
-        await ex.start(user);
+          let executor = new Executor(settings, db.getHandle());
+  
+          try {
+            executor.start('Ben').then(() => {
+              
+            });
 
-        return;
-      });
+          } catch (e) {
+            console.error(e);
+          }
+
+      // });
 
       if (isDev) {
         win.loadURL('http://localhost:3000/');

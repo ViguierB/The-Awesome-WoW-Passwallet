@@ -31,23 +31,23 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
     modalService.openModal(<AccountDeleteModal item={this.props} />).then(() => {});
   }
 
-  // onStartButtonClicked() {
-  //   if (this.state.launchInProgress) { return; }
-  //   this.setState({
-  //     launchInProgress: true
-  //   })
-  //   executorService.launchWowForUser(this.props.name).then(() => {
-  //     this.setState({
-  //       launchInProgress: false
-  //     });
-  //   });
-  // }
-
   onStartButtonClicked() {
+    if (this.state.launchInProgress) { return; }
     this.setState({
-      launchInProgress: !this.state.launchInProgress
+      launchInProgress: true
     })
+    executorService.launchWowForUser(this.props.name).then(() => {
+      this.setState({
+        launchInProgress: false
+      });
+    });
   }
+
+  // onStartButtonClicked() {
+  //   this.setState({
+  //     launchInProgress: !this.state.launchInProgress
+  //   })
+  // }
 
   render() {
     return (

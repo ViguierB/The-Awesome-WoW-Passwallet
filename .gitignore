@@ -1,5 +1,8 @@
 /dist/
+/build/
 /node_modules/
 
 accounts.db
 settings.json
+
+10.1.5/
