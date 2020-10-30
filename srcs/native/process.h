@@ -41,7 +41,7 @@ public:
     return this->getHandle().pid;
   }
 
-  int start() {
+  void start() {
     std::vector<const char*> args(_arguments.size() + 1);
     std::transform(_arguments.begin(), _arguments.end(), args.begin(), [] (std::string& arg) -> const char* {
       return arg.c_str();
@@ -58,11 +58,7 @@ public:
     int r;
     if ((r = uv_spawn(this->_mainLoop, this->_child_req, &this->_options))) {
       throw std::runtime_error(uv_strerror(r));
-    } else {
-      fprintf(stdout, "Launched process with ID %d\n", this->_child_req->pid);
     }
-
-    return r;
   }
 };
  

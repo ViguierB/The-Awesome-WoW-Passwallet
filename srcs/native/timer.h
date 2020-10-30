@@ -10,7 +10,7 @@ class Timer {
 private:
   uv_loop_t*    _mainLoop;
   bool          _isStarted = false;
-  std::uint32_t _counter = 0; 
+  std::uint32_t _counter = 0;
   
   uv_timer_t _handle = {0};
 
@@ -43,6 +43,9 @@ public:
   }
 
   ~Timer() = default;
+  // ~Timer() {
+  //   std::cout << "~Timer()" << std::endl;
+  // }
 
   auto& getNativeHandle() { return this->_handle; }
 

@@ -7,6 +7,7 @@ import DBControllerUserPassword, { controllerType as controllerUserPasswordType 
 import { Executor } from './executor';
 
 
+
 const isDev = process.env.IS_DEV === 'true';
 
 const dbFilePath = 'accounts.db';
@@ -44,20 +45,18 @@ function createWindow () {
     })
 
     db.open().then(() => {
-      // ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
+      ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
 
           let executor = new Executor(settings, db.getHandle());
   
           try {
-            executor.start('Ben').then(() => {
-              
-            });
-
+            await executor.start(user);
+            // setTimeout(() => global.gc(), 0);
           } catch (e) {
             console.error(e);
           }
 
-      // });
+      });
 
       if (isDev) {
         win.loadURL('http://localhost:3000/');

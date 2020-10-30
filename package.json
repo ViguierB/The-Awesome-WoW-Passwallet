@@ -9,7 +9,7 @@
     "build-native": "rm -r build; electron-rebuild -f -w native_executor",
     "build-all": "npm run build-native && npm run build",
     "build-all-dev": "npm run build-native-dev && npm run build",
-    "start-dev": "env IS_DEV=true electron --js-flags='--expose-gc' --inspect=5858 ./dist/main.js",
+    "start-dev": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js",
     "start": "electron ./dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

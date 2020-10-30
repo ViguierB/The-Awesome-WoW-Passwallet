@@ -3,6 +3,8 @@ import * as path from 'path';
 import { DBHandle } from './db_controller';
 import { Settings } from './settings';
 const { NativeExecutor } = require('bindings')('native_executor')
+var SegfaultHandler = require('segfault-handler');
+SegfaultHandler.registerHandler("crash.log");
 
 const pTimeout = (t: number) => new Promise((resolve) => setTimeout(resolve, t));
 
@@ -22,7 +24,15 @@ export class Executor {
 
     this.nativeExecutor.spawnWow();
     try {
-      await this.nativeExecutor.waitForWoWReady();
+      await (async () => {
+        let wowReady = false;
+        for (let i = 0; i < 15; ++i) {
+          await pTimeout(1000);
+          wowReady = await this.nativeExecutor.isWoWReady();
+          if (wowReady) { break; }
+        }
+      })();
+      await pTimeout(2000);
       this.nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);

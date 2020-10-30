@@ -11,18 +11,14 @@ public:
   NativeExecutorCommon(const Napi::CallbackInfo &info);
 
 protected:
-  struct uv_loop_s* _main_loop;
+  struct uv_loop_s*             _main_loop;
+  Napi::Env                     _env;
   struct {
     std::string email;
     std::string password;
-  }           _account;
-  std::string _workingDir;
-  std::string _wowFilename;
-
-  Napi::Env               _env;
-
-  uv_process_t          _child_req;
-  uv_process_options_t  _options = {0};
+  }                             _account;
+  std::string                   _workingDir;
+  std::string                   _wowFilename;
   std::unique_ptr<pw::Process>  _wowProc = nullptr;
 
   Napi::Value setAccount(const Napi::CallbackInfo &info);
@@ -35,7 +31,7 @@ Napi::Object T::Init(Napi::Env env, Napi::Object exports) { \
     /* This method is used to hook the accessor and method callbacks */ \
     Napi::Function func = T::DefineClass(env, "NativeExecutor", { \
       T::InstanceMethod("spawnWow", &T::spawnWow), \
-      T::InstanceMethod("waitForWoWReady", &T::waitForWoWReady), \
+      T::InstanceMethod("isWoWReady", &T::isWoWReady), \
       T::InstanceMethod("writeCredentials", &T::writeCredentials), \
       T::InstanceMethod("setAccount", &T::setAccount), \
       T::InstanceMethod("setWorkDir", &T::setWorkDir), \

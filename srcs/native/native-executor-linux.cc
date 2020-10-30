@@ -5,33 +5,29 @@
 #include "./windows_matching_pid_linux.h"
 #include "./native-executor.h"
 #include "./timer.h"
-
-extern "C" {
-  #include <xdo.h>
-  #include <X11/Xlib.h>
-  #include <X11/Xatom.h>
-  #include <X11/keysym.h>
-}
+#include "./fake-keyboard-linux.h"
 
 class NativeExecutorForLinux : public NativeExecutorCommon, public Napi::ObjectWrap<NativeExecutorForLinux> {
 public:
   static inline Napi::Object Init(Napi::Env env, Napi::Object exports);
   NativeExecutorForLinux(const Napi::CallbackInfo &info):
-    NativeExecutorCommon(info),
-    Napi::ObjectWrap<NativeExecutorForLinux>(info) {}
+  NativeExecutorCommon(info),
+  Napi::ObjectWrap<NativeExecutorForLinux>(info) {
+    std::cout << "NativeExecutorForLinux()" << std::endl;
+  }
 
   ~NativeExecutorForLinux() {
+    XCloseDisplay(_display);
     std::cout << "~NativeExecutorForLinux()" << std::endl;
-    if (!!this->_options.args) {
-      free(this->_options.args);
-    }
   }
 
 private:
-  // xdo_t *x = xdo_new(NULL);
+  Display*  _display = XOpenDisplay(0);
+  Window    _wowWin = 0;
 
   static Napi::FunctionReference constructor;
   Napi::Value waitForWoWReady(const Napi::CallbackInfo &info);
+  Napi::Value isWoWReady(const Napi::CallbackInfo &info);
   Napi::Value spawnWow(const Napi::CallbackInfo &info);
   Napi::Value writeCredentials(const Napi::CallbackInfo &info);
 };  
@@ -40,30 +36,16 @@ Napi::FunctionReference NativeExecutorForLinux::constructor;
 
 DECLARE_INIT_FUNCTION(NativeExecutorForLinux);
 
-Napi::Value NativeExecutorForLinux::waitForWoWReady(const Napi::CallbackInfo &info){
-    Napi::Env env = info.Env();
+Napi::Value NativeExecutorForLinux::isWoWReady(const Napi::CallbackInfo &info){
+  Napi::Env env = info.Env();
 
-    auto deferred = std::make_shared<Napi::Promise::Deferred>(info.Env());
-    auto* timer = new pw::Timer(this->_main_loop);
+  pw::WindowsMatchingPid match(this->_display, XDefaultRootWindow(this->_display), this->_wowProc->getPid());
 
-    timer->start([this, env, deferred] (pw::Timer& timer) {
-      
-      Display *display = XOpenDisplay(0);
-
-      pw::WindowsMatchingPid match(display, XDefaultRootWindow(display), this->_wowProc->getPid());
-
-      if (match.result().size() == 3) {
-        pw::Timer::once(this->_main_loop, [deferred, env] {
-          deferred->Resolve(env.Undefined());
-        }, 1000);
-        timer.deleteLater();
-      } else if (timer.getCount() >= 15) {
-        deferred->Reject(Napi::String::New(env, "Unable to find WoW window"));
-        timer.deleteLater();
-      }
-    }, { 1000, 1000 });
-
-    return deferred->Promise();
+  if (match.result().size() == 3) {
+    this->_wowWin = match.result().back();
+    return Napi::Boolean::New(env, true);
+  }
+  return Napi::Boolean::New(env, false);
 }
 
 Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){
@@ -89,9 +71,13 @@ Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){
 }
 
 Napi::Value NativeExecutorForLinux::writeCredentials(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
+  Napi::Env             env = info.Env();
+  pw::FakeKeyboardLinux fakeKb(this->_display, this->_wowWin);
 
-
+  fakeKb.text(this->_account.email);
+  fakeKb.sendTab();
+  fakeKb.text(this->_account.password);
+  fakeKb.sendReturn();
 
   return env.Undefined();
 }
