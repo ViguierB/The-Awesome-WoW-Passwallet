@@ -33,6 +33,7 @@ private:
   static Napi::FunctionReference constructor;
   Napi::Value waitForWoWReady(const Napi::CallbackInfo &info);
   Napi::Value spawnWow(const Napi::CallbackInfo &info);
+  Napi::Value writeCredentials(const Napi::CallbackInfo &info);
 };  
 
 Napi::FunctionReference NativeExecutorForLinux::constructor;
@@ -49,10 +50,12 @@ Napi::Value NativeExecutorForLinux::waitForWoWReady(const Napi::CallbackInfo &in
       
       Display *display = XOpenDisplay(0);
 
-      pw::WindowsMatchingPid match(display, XDefaultRootWindow(display), this->_child_req.pid);
+      pw::WindowsMatchingPid match(display, XDefaultRootWindow(display), this->_wowProc->getPid());
 
       if (match.result().size() == 3) {
-        deferred->Resolve(env.Undefined());
+        pw::Timer::once(this->_main_loop, [deferred, env] {
+          deferred->Resolve(env.Undefined());
+        }, 1000);
         timer.deleteLater();
       } else if (timer.getCount() >= 15) {
         deferred->Reject(Napi::String::New(env, "Unable to find WoW window"));
@@ -66,29 +69,31 @@ Napi::Value NativeExecutorForLinux::waitForWoWReady(const Napi::CallbackInfo &in
 Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){
     Napi::Env env = info.Env();
 
-    // pw::Timer::once(this->_main_loop, [] {
-    //   std::cout << "test Timer::once" << std::endl;
-    // }, 1000);
+    try {
 
-    this->_options.file = (const char*)"wine";
-    this->_options.cwd = this->_workingDir.c_str();
-    this->_options.exit_cb = &NativeExecutorCommon::onChildExit;
-    this->_options.flags = UV_PROCESS_DETACHED;
-    this->_options.args = (char**)malloc(sizeof(char*) * 3);
-    this->_options.args[0] = (char*)"wine";
-    this->_options.args[1] = (char*)this->_wowFilename.c_str();
-    this->_options.args[2] = NULL;
-    this->_child_req.data = this;
- 
-    int r;
-    if ((r = uv_spawn(this->_main_loop, &this->_child_req, &this->_options))) {
-      throw Napi::Error::New(info.Env(), uv_strerror(r));
-    } else {
-      fprintf(stdout, "Launched process with ID %d\n", this->_child_req.pid);
-      uv_unref((uv_handle_t*) &this->_child_req);
+      this->_wowProc = std::make_unique<pw::Process>(
+        this->_main_loop, this->_workingDir, "wine", std::vector<std::string>{ this->_wowFilename }
+      );
+
+      auto& options = _wowProc->getOptions();
+      options.flags = UV_PROCESS_DETACHED;
+
+      this->_wowProc->start();
+      uv_unref((uv_handle_t*) &this->_wowProc->getHandle());
+
+    } catch (const std::exception& e) {
+      Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
     }
 
     return env.Undefined();
+}
+
+Napi::Value NativeExecutorForLinux::writeCredentials(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+
+
+  return env.Undefined();
 }
 
 

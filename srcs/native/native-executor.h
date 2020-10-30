@@ -3,6 +3,8 @@
 
 #include <uv.h>
 #include <napi.h>
+#include <memory>
+#include "./process.h"
 
 class NativeExecutorCommon {
 public:
@@ -21,8 +23,7 @@ protected:
 
   uv_process_t          _child_req;
   uv_process_options_t  _options = {0};
-
-  static void onChildExit(uv_process_t* req, int64_t exit_status, int term_signal);
+  std::unique_ptr<pw::Process>  _wowProc = nullptr;
 
   Napi::Value setAccount(const Napi::CallbackInfo &info);
   Napi::Value setWorkDir(const Napi::CallbackInfo &info);
@@ -35,6 +36,7 @@ Napi::Object T::Init(Napi::Env env, Napi::Object exports) { \
     Napi::Function func = T::DefineClass(env, "NativeExecutor", { \
       T::InstanceMethod("spawnWow", &T::spawnWow), \
       T::InstanceMethod("waitForWoWReady", &T::waitForWoWReady), \
+      T::InstanceMethod("writeCredentials", &T::writeCredentials), \
       T::InstanceMethod("setAccount", &T::setAccount), \
       T::InstanceMethod("setWorkDir", &T::setWorkDir), \
       T::InstanceMethod("setWowName", &T::setWowName), \

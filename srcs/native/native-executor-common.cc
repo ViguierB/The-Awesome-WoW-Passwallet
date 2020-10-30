@@ -16,40 +16,39 @@ Napi::Value NativeExecutorCommon::setAccount(const Napi::CallbackInfo &info) {
       account.Get("password").ToString()
     };
   } catch(std::exception &) {
-    throw Napi::Error::New(env, "argument must be an object typed as { email: string, password: string }");
+    Napi::Error::New(env, "argument must be an object typed as { email: string, password: string }").ThrowAsJavaScriptException();
+    return env.Undefined();
   }
 
-  return info.Env().Undefined();
+  return env.Undefined();
 }
 
 Napi::Value NativeExecutorCommon::setWorkDir(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "argument must be a string");
+    Napi::Error::New(env, "argument must be a string").ThrowAsJavaScriptException();
+    return env.Undefined();
   }
 
   auto&& worgingDirectory = info[0].As<Napi::String>();
 
   this->_workingDir = worgingDirectory;
 
-  return info.Env().Undefined();
+  return env.Undefined();
 }
 
 Napi::Value NativeExecutorCommon::setWowName(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "argument must be a string");
+    Napi::Error::New(env, "argument must be a string").ThrowAsJavaScriptException();
+    return env.Undefined();
   }
 
   auto&& filename = info[0].As<Napi::String>();
 
   this->_wowFilename = filename;
 
-  return info.Env().Undefined();
-}
-
-void NativeExecutorCommon::onChildExit(uv_process_t* req, int64_t exit_status, int term_signal) {
-  uv_close((uv_handle_t*) req, NULL);
+  return env.Undefined();
 }

@@ -17,14 +17,13 @@ export class Executor {
 
   public async start(username: string) {
     this.nativeExecutor.setAccount(this._dbHandle.getAccount(username));
-    this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wowPath));
-    this.nativeExecutor.setWowName(path.basename(this._settings.settings.wowPath));
+    this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wowPath[process.platform]));
+    this.nativeExecutor.setWowName(path.basename(this._settings.settings.wowPath[process.platform]));
 
     this.nativeExecutor.spawnWow();
     try {
-      console.log('test 1');
       await this.nativeExecutor.waitForWoWReady();
-      console.log('test 2 ??');
+      this.nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);
     }
