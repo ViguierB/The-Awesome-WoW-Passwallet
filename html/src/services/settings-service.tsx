@@ -21,6 +21,10 @@ class SettingsService {
 
   // }
 
+  getPlatform() {
+    return this._ipc.invoke('get-platform');
+  }
+
   updateSettings(data: { [key: string]: any } ) {
     return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
   }

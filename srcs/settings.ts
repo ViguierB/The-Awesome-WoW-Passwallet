@@ -4,16 +4,37 @@ import * as fs from 'fs';
 import * as os from 'os';
 
 function getDefaultPath() {
-  switch (process.platform) {
-    case "linux": return `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft/_classic_/WowClassic.exe`
-    case "win32": return "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\WowClassic.exe"
-    default: return ''
+  return {
+    "linux": `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft/_classic_/WowClassic.exe`,
+    "win32": "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\WowClassic.exe"
   }
 }
 
 const defaultSettings = {
   wowPath: getDefaultPath(),
   dbSecretProvider: 'account-defined'
+}
+
+function isObject(item: any) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+function mergeDeep(target: any, ...sources: any[]): any {
+  if (!sources.length) return target;
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
 }
 
 export class Settings {
@@ -26,8 +47,11 @@ export class Settings {
       return dialog.showOpenDialog(this._win, options);
     });
 
+    ipcMain.handle('get-platform', (_event, _options) => process.platform);
+
     ipcMain.handle('update-settings', async (_event, data) => {
-      Object.assign(this.settings, data);
+      this.settings = mergeDeep(this.settings, data);
+      await this.save();
       new Notification({
         title: "PASSWALLET",
         body: "Settings have been updated!",

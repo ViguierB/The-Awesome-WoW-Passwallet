@@ -5,7 +5,10 @@ import settingsService from '../services/settings-service';
 import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
 
 type SettingsPageState = {
-  wowPath: string
+  wowPath: {
+    [key: string]: string
+  }
+  platform: string | null
 };
 
 export class SettingsPage extends Component<{}, SettingsPageState> {
@@ -13,7 +16,6 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
   private _attenuator = new AttenuateEventTrigger(1500);
 
   private onDataChange = this._attenuator.wrap((data) => {
-    console.log('test');
     settingsService.updateSettings(data).then(() => {});
   });
 
@@ -21,11 +23,15 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
     super(props);
 
     this.state = {
-      wowPath: ""
+      wowPath: {},
+      platform: null
     }
 
     settingsService.settingUpdated.subcribe(this.refreshSettings.bind(this));
     settingsService.getSettings().then(this.refreshSettings.bind(this));
+    settingsService.getPlatform().then((pltf: string) => {
+        this.setState({ platform: pltf });
+    })
 
   }
 
@@ -37,9 +43,10 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
   }
 
   private onPathChange(e: any) {
-    this.onDataChange({ wowPath:  e.target.value });
+    const platform = this.state.platform || "hummm";
+    this.onDataChange({ wowPath: { [platform]: e.target.value } });
     this.setState({
-      wowPath: e.target.value
+      wowPath: { [platform]: e.target.value }
     });
   }
 
@@ -52,8 +59,9 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
       ]
     }).then(f => {
       if (!f) { return; }
-      this.setState({ wowPath: f.file || "" });
-      this.onDataChange({ wowPath: f.file || "" })
+      const platform = this.state.platform || "hummm";
+      this.setState({ wowPath: { [platform]: f.file || "" } });
+      this.onDataChange({ wowPath: { [platform]: f.file || "" } })
     })
   }
 
@@ -63,7 +71,7 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
         <div className="settings-field">
           <label htmlFor="input-path"> World of Warcraft binary path: </label>
           <div style={{ display: 'flex', }}>
-            <input id="input-path" value={ this.state.wowPath }
+            <input id="input-path" value={ this.state.wowPath[this.state.platform || ""] || "" }
               onChange={ this.onPathChange.bind(this) }
             />
             <label onClick={ this.openFileDialog.bind(this) }>...</label>
