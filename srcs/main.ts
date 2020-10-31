@@ -69,6 +69,8 @@ function createWindow () {
         win.loadURL(`file://${path.resolve(app.getAppPath(), 'html/build/index.html')}`);
         win.removeMenu();
       }
+    }, (_e: any) => {
+      app.quit();
     })
 
     win.on('close', async () => {

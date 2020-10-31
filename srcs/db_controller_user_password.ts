@@ -165,15 +165,8 @@ export default class DBControllerUserPassword extends DBController {
   protected getType() { return controllerType }
 
   protected async getSecret() {
-    try {
       this._password = this._password || await this.askPassword();
       return this._password;
-    } catch (e) {
-      if (e?.reason === 'cancel') {
-        app.quit();
-      }
-      throw e;
-    }
   }
 
   protected async onGetSecretError(e: Error) {
