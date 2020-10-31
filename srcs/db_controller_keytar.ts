@@ -24,4 +24,8 @@ export default class DBControllerKeytar extends DBController {
     }
   }
 
+  protected async onGetSecretError(_e: Error) {
+    return { retry: false };
+  }
+
 }
