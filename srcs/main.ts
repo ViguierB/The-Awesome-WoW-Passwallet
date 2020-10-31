@@ -17,6 +17,7 @@ function createWindow () {
     height: 430,
     minWidth: 450,
     minHeight: 250,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       enableWebSQL: false,
@@ -37,12 +38,17 @@ function createWindow () {
     ].some((v) => {
       if (v.type === settings.settings.dbSecretProvider) {
         db.changeController(v.ctor);
-        return false;
+        db.getController().setMainWindow(win);
+        return true;
       }
-      return true;
+      return false;
     })
 
     db.open().then(() => {
+      win.once('ready-to-show', () => {
+        win.show()
+      });
+
       ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
 
           let executor = new Executor(settings, db.getHandle());

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 
 type dbItemType = {
   email: string,
@@ -86,10 +86,13 @@ export class DBHandle {
 
 export default abstract class DBController {
 
-  private _algorithm = 'aes-256-cbc';
+  private   _algorithm = 'aes-256-cbc';
+  protected _mainWin: BrowserWindow | null = null;
 
   protected abstract async getSecret(): Promise<string>;
   protected abstract getType(): string;
+
+  public setMainWindow(win: BrowserWindow) { this._mainWin = win; }
 
   private async _lock(buffer: Buffer) {
     const secret = await this.getSecret();

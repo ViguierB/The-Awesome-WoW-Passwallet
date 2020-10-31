@@ -33,6 +33,14 @@ class SettingsService {
     return this._ipc.invoke('get-settings');
   }
 
+  setProviderPassword(password: string) {
+    return this._ipc.invoke('set-provider-password', password);
+  }
+
+  setProviderKeytar() {
+    return this._ipc.invoke('set-provider-keytar');
+  }
+
   openFileDialog(options: any = {}) {
     return this._ipc.invoke('open-file-dialog', options).then((f: any) => {
       if (f.canceled) {

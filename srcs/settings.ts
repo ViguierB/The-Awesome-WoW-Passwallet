@@ -2,6 +2,8 @@ import { DB } from "./db";
 import { BrowserWindow, ipcMain, dialog, Notification } from "electron";
 import * as fs from 'fs';
 import * as os from 'os';
+import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
+import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
 
 function getDefaultPath() {
   return {
@@ -12,7 +14,7 @@ function getDefaultPath() {
 
 const defaultSettings = {
   wowPath: getDefaultPath(),
-  dbSecretProvider: 'account-defined'
+  dbSecretProvider: controllerKeytarType
 }
 
 function isObject(item: any) {
@@ -49,6 +51,33 @@ export class Settings {
 
     ipcMain.handle('get-platform', (_event, _options) => process.platform);
 
+    ipcMain.handle('set-provider-keytar', (_event, _void) => {
+      if (this.settings.dbSecretProvider === controllerKeytarType) {
+        return;
+      }
+
+      this.settings.dbSecretProvider = controllerKeytarType;
+      this._db.changeController(DBControllerKeytar);
+      new Notification({
+        title: "PASSWALLET",
+        body: "Settings have been updated!",
+        silent: true,
+        timeoutType: 'default'
+      }).show();
+    });
+
+    ipcMain.handle('set-provider-password', (_event, password) => {
+      this.settings.dbSecretProvider = controllerUserPasswordType;
+      this._db.changeController(DBControllerUserPassword);
+      (<DBControllerUserPassword>this._db.getController()).setPassword(password);
+      new Notification({
+        title: "PASSWALLET",
+        body: "Password updated",
+        silent: true,
+        timeoutType: 'default'
+      }).show();
+    });
+
     ipcMain.handle('update-settings', async (_event, data) => {
       this.settings = mergeDeep(this.settings, data);
       await this.save();
@@ -63,6 +92,10 @@ export class Settings {
 
     ipcMain.handle('get-settings', async (_event, _d) => {
       return this.settings;
+    });
+
+    this._win.on('close', () => {
+      this.settings.bounds = this._win.getBounds();
     });
 
   }
@@ -91,6 +124,10 @@ export class Settings {
           this.settings = JSON.parse(buffer.toString());
         } catch (e) {
           reject(e);
+        }
+
+        if (!!this.settings.bounds) {
+          this._win.setBounds(this.settings.bounds);
         }
 
         this._win.webContents.send('on-settings-opened');

@@ -16,6 +16,8 @@ export class DB {
     this._db = new ctor();
   }
 
+  public getController() { return this._db; }
+
   public getHandle() {
     return this._handle;
   }
