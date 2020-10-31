@@ -6,8 +6,6 @@ import DBControllerKeytar, { controllerType as controllerKeytarType } from './db
 import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
 import { Executor } from './executor';
 
-
-
 const isDev = process.env.IS_DEV === 'true';
 
 const dbFilePath = 'accounts.db';
@@ -62,7 +60,7 @@ function createWindow () {
         win.loadURL('http://localhost:3000/');
         win.webContents.openDevTools();
       } else {
-        win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html')}`);
+        win.loadURL(`file://${path.resolve(app.getAppPath(), 'html/build/index.html')}`);
         win.removeMenu();
       }
     })
