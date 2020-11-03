@@ -13,8 +13,10 @@
       "cflags_cc!": [ "-fno-exceptions" ],
       "defines": [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
       'conditions': [
-        [ 'OS in "linux freebsd openbsd solaris android aix cloudabi"', {
-          'cflags': ['-Wno-cast-function-type'],
+        ['OS is "win"', {
+          'sources': [
+            'srcs/native/native-executor-windows.cc',
+          ],
         }],
         ['OS not in ["mac", "win"]', {
           'sources': [
@@ -22,6 +24,7 @@
           ],
           'cflags': [
             '<!(pkg-config --cflags x11)',
+            '-Wno-cast-function-type',
             '-Wno-missing-field-initializers',
             '-Wno-deprecated-declarations',
           ],

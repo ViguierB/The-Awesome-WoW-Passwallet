@@ -4,10 +4,20 @@ import { NavLink } from "react-router-dom";
 import './dock.css';
 
 type DockProps = {
-  items: Array<{ text: string, icon: any, path: string, key: number }>
+  items: Array<{ text: string, icon: any, path: string, key: number, default: boolean }>
 }
 
+
 export default class Dock extends Component<DockProps, {}> {
+  
+  private _first = true;
+
+  simulateClick(e: any) {
+    if (this._first) {
+      e.click()
+      this._first = false;
+    }
+  }
 
   render() {
     const items = this.props.items || [];
@@ -17,9 +27,10 @@ export default class Dock extends Component<DockProps, {}> {
         { 
           items.map(item => {
             return (
-              <NavLink key={ item.key } to={ item.path }
+              <NavLink exact key={ item.key } to={ item.path }
                 style={{ textDecoration: "none" }}
                 activeClassName="selected"
+                ref={item.default ? this.simulateClick.bind(this) : () => {}}
               >
                 <li className="pw-dock-element">
                   <div className="selection"></div>

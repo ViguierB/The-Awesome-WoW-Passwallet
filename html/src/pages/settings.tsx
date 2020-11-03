@@ -27,7 +27,7 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
 
   private onPasswordChange = this._passwordAttenuator.wrap(() => {
     if (
-      this._password.password != "" &&
+      this._password.password !== "" &&
       this._password.password === this._password.passwordVerification
     ) {
       settingsService.setProviderPassword(this._password.password).then(() => {
@@ -78,8 +78,8 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
 
   private openFileDialog() {
     settingsService.openFileDialog({
-      propriétés: ['openFile'],
-      filtres: [
+      properties: ['openFile'],
+      filters: [
         { name : 'Software', extensions: ['exe'] },
         { name: 'All', extensions: ['*'] }
       ]

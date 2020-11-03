@@ -26,7 +26,7 @@ export class Executor {
         let wowReady = false;
         for (let i = 0; i < 15; ++i) {
           await pTimeout(1000);
-          wowReady = await this.nativeExecutor.isWoWReady();
+          wowReady = this.nativeExecutor.isWoWReady();
           if (wowReady) { break; }
         }
       })();

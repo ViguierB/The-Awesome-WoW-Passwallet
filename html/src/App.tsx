@@ -14,21 +14,19 @@ import {
 } from "react-router-dom";
 
 const dockItems = [
-  { text: 'Home', icon: <HomeIcon />, path: '/home' },
-  { text: 'Settings', icon: <SettingsIcon />, path: '/settings' }
+  { text: 'Home', icon: <HomeIcon />, path: '/', default: true },
+  { text: 'Settings', icon: <SettingsIcon />, path: '/settings', default: false }
 ].map(i => Object.assign(i, { key: gen.get() }));
 
 class App extends Component<{}, {}> {
   
   constructor(props: any) {
     super(props);
-
-    window.history.pushState(null, "", "/home")
   }
 
   render() {
-    return (
-      <Router>
+    const app = (
+      <Router basename="/">
         <div className="pw-app">
           <div className="pw-dock-container">
             <Dock items={ dockItems }/>
@@ -38,7 +36,7 @@ class App extends Component<{}, {}> {
               <Route path="/settings">
                 <SettingsPage />
               </Route>
-              <Route path="/home">
+              <Route exact path="/">
                 <Home />
               </Route>
             </Switch>
@@ -48,6 +46,8 @@ class App extends Component<{}, {}> {
         </div>
       </Router>
     );
+
+    return app;
   }
 }
 

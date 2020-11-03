@@ -23,7 +23,7 @@ function createWindow () {
       enableWebSQL: false,
       webgl: false
     }
-  })
+  });
 
   const db = new DB(win, dbFilePath);
   const settings = new Settings(win, db, settingsFilePath);
@@ -64,7 +64,19 @@ function createWindow () {
 
       if (isDev) {
         win.loadURL('http://localhost:3000/');
-        win.webContents.openDevTools();
+        // win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html/')}`);
+
+        if (process.platform === 'win32') {
+          const devtools = new BrowserWindow();
+          win.webContents.setDevToolsWebContents(devtools.webContents)
+          win.webContents.openDevTools({ mode: 'detach' })
+
+          win.on('close', () => {
+            devtools.close();
+          })
+        } else {
+          win.webContents.openDevTools();
+        }
       } else {
         win.loadURL(`file://${path.resolve(app.getAppPath(), 'html/build/index.html')}`);
         win.removeMenu();
