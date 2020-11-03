@@ -21,20 +21,20 @@ export class Executor {
     this.nativeExecutor.setWowName(path.basename(this._settings.settings.wowPath[process.platform]));
 
     this.nativeExecutor.spawnWow();
-    try {
-      await (async () => {
-        let wowReady = false;
-        for (let i = 0; i < 15; ++i) {
-          await pTimeout(1000);
-          wowReady = await this.nativeExecutor.isWoWReady();
-          if (wowReady) { break; }
-        }
-      })();
-      await pTimeout(2000);
-      this.nativeExecutor.writeCredentials();
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   await (async () => {
+    //     let wowReady = false;
+    //     for (let i = 0; i < 15; ++i) {
+    //       await pTimeout(1000);
+    //       wowReady = await this.nativeExecutor.isWoWReady();
+    //       if (wowReady) { break; }
+    //     }
+    //   })();
+    //   await pTimeout(2000);
+    //   this.nativeExecutor.writeCredentials();
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 
 }

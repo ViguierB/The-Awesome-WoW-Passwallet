@@ -143,6 +143,7 @@ export default abstract class DBController {
         
         try {
           const locked = JSON.parse(buffer.toString())
+          console.log(locked);
           var unlockedbd = await this._unlock(locked);
         } catch (e) {
           reject(e);

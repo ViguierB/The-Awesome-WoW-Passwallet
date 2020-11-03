@@ -5,10 +5,15 @@ const style = `
   html, body, #container {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    width: 420px;
+    height: 95px;
     color: rgb(223, 223, 223);
     background-color: #3a3939;
+  }
+
+  form {
+    margin: 0;
+    margin-block-end: 0;
   }
 
   #container {
@@ -89,10 +94,12 @@ const html = Buffer.from(`<html>
   <body>
     <script>window.electron = require('electron')</script>
     <div id='container'>
-      <input id='password-input' type='password' placeholder='Enter your password' />
+      <form id="formPassword">
+        <input id='password-input' type='password' placeholder='Enter your password' autofocus/>
+      </form>
       <div id='button-container'>
         <button id="cancel-button" class="button">Cancel</button>
-        <button id="ok-button" class="button">Ok</button>
+        <button id="ok-button" class="button" form="formPassword" value="Submit">Ok</button>
       </div>
     </div>
     <script>${script}</script>
@@ -118,9 +125,9 @@ export default class DBControllerUserPassword extends DBController {
       show: false,
       width: 420,
       height: 95,
-      autoHideMenuBar: true,
+      useContentSize: true,
       title: 'Unlock database',
-      resizable: false,
+      // resizable: false,
       webPreferences: {
         nodeIntegration: true,
         enableWebSQL: false,
@@ -131,8 +138,16 @@ export default class DBControllerUserPassword extends DBController {
     modal.loadURL("data:text/html;base64," + html);
 
     modal.once('ready-to-show', () => {
-      modal.removeMenu();
+      
       modal.show();
+      
+      if (process.env.IS_DEV === "true") {
+        const devtools = new BrowserWindow();
+        modal.webContents.setDevToolsWebContents(devtools.webContents)
+        modal.webContents.openDevTools({ mode: 'detach' })
+      } else {
+        modal.removeMenu();
+      }
     })
 
     return new Promise<string>((resolve, reject) => {
