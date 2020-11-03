@@ -21,12 +21,24 @@ class SettingsService {
 
   // }
 
+  getPlatform() {
+    return this._ipc.invoke('get-platform');
+  }
+
   updateSettings(data: { [key: string]: any } ) {
     return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
   }
 
   getSettings() {
     return this._ipc.invoke('get-settings');
+  }
+
+  setProviderPassword(password: string) {
+    return this._ipc.invoke('set-provider-password', password);
+  }
+
+  setProviderKeytar() {
+    return this._ipc.invoke('set-provider-keytar');
   }
 
   openFileDialog(options: any = {}) {

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
 
 type dbItemType = {
   email: string,
@@ -30,7 +30,7 @@ class DBControllerNotFoundException {
   public toString() { return `DBControllerNotFoundException: ${this._message}`; }
 }
 
-class DBHandle {
+export class DBHandle {
 
   constructor(private _db: dbType) {}
 
@@ -86,10 +86,14 @@ class DBHandle {
 
 export default abstract class DBController {
 
-  private _algorithm = 'aes-256-cbc';
+  private   _algorithm = 'aes-256-cbc';
+  protected _mainWin: BrowserWindow | null = null;
 
+  protected abstract async onGetSecretError(e: Error): Promise<{ retry: boolean }>;
   protected abstract async getSecret(): Promise<string>;
   protected abstract getType(): string;
+
+  public setMainWindow(win: BrowserWindow) { this._mainWin = win; }
 
   private async _lock(buffer: Buffer) {
     const secret = await this.getSecret();
@@ -103,20 +107,28 @@ export default abstract class DBController {
     return { iv: iv.toString('base64'), c: c.toString('base64'), e: 'base64', t: this.getType() };
   }
 
-  private async _unlock(locked: { iv: string, c: string, e: string, t: string }) {
+  private async _unlock(locked: { iv: string, c: string, e: string, t: string }): Promise<Buffer> {
     if (locked.t !== this.getType()) {
       throw new DBControllerBadTypeException(`Controller type is not matching (expected '${this.getType()}', got '${locked.t}'`);
     }
-    const secret = await this.getSecret();
-    const iv = Buffer.from(locked.iv, locked.e as any);
-    const buffer = Buffer.from(locked.c, locked.e as any);
-    const key = crypto.createHash("sha256").update(secret).digest();
+    try {
+      const secret = await this.getSecret();
+      const iv = Buffer.from(locked.iv, locked.e as any);
+      const buffer = Buffer.from(locked.c, locked.e as any);
+      const key = crypto.createHash("sha256").update(secret).digest();
 
-    const decipher = crypto.createDecipheriv(this._algorithm, key, iv);
+      const decipher = crypto.createDecipheriv(this._algorithm, key, iv);
 
-    const d = Buffer.concat([ decipher.update(buffer), decipher.final() ]);
+      const d = Buffer.concat([ decipher.update(buffer), decipher.final() ]);
 
-    return d;
+      return d;
+    } catch (e) {
+      const { retry } = await this.onGetSecretError(e);
+      if (retry) {
+        return await this._unlock(locked);
+      }
+      throw e;
+    }
   }
 
   public open(filepath: string) {

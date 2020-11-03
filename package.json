@@ -2,11 +2,50 @@
   "name": "the-awesome-wow-passwallet",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
+    "build-native-dev": "rm -r build; electron-rebuild --debug -f -w native_executor",
+    "build-native": "rm -r build; electron-rebuild -f -w native_executor",
+    "build-all": "npm run build-native && npm run build",
+    "build-all-dev": "npm run build-native-dev && npm run build",
+    "build-front": "sh -c 'cd html; npm run build'",
+    "start-dev": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js",
     "start": "electron ./dist/main.js",
+    "dist": "electron-builder build",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "com.holidev.passwallet",
+    "productName": "the awesome wow passwallet",
+    "compression": "maximum",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "**/*.node"
+        ]
+      },
+      {
+        "from": "dist",
+        "to": "dist"
+      },
+      {
+        "from": "html/build",
+        "to": "html/build"
+      },
+      {
+        "from": ".",
+        "to": ".",
+        "filter": [
+          "package.json"
+        ]
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -14,13 +53,18 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^10.1.3",
+    "electron": "^10.1.5",
+    "electron-builder": "^22.9.1",
+    "electron-rebuild": "^2.3.2",
+    "node-addon-api": "^3.0.2",
     "typescript": "^4.0.3"
   },
   "dependencies": {
+    "bindings": "^1.5.0",
     "crypto": "^1.0.1",
-    "keytar": "^7.0.0"
+    "keytar": "^7.0.0",
+    "nan": "^2.14.2"
   }
 }

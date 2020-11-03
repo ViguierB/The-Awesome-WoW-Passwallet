@@ -33,7 +33,7 @@ npm run build
 Then go back to the root directory of the project and run:
 
 ```bash
-npm run build
+npm run build-all
 ```
 
 ## Run
@@ -44,7 +44,7 @@ npm run build
 ## start front http server in background
 ( cd html && npm start ) & frontpid=$!
 
-npm start
+npm run start-dev
 
 ## kill the http server
 kill $frontpid;
@@ -57,5 +57,5 @@ kill $frontpid;
 ## build front
 ( cd html && npm run build -- --prod )
 
-npm run build && npm start;
+npm run build-all && npm start;
 ```

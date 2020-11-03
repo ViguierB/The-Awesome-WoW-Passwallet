@@ -1,5 +1,10 @@
 /dist/
+/build/
 /node_modules/
+/bin
+/release
 
 accounts.db
 settings.json
+
+10.1.5/
