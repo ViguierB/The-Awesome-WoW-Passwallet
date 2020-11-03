@@ -5,6 +5,7 @@
 /release
 
 accounts.db
+accounts.db.bak
 settings.json
 
 10.1.5/

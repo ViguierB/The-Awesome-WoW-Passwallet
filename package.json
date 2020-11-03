@@ -26,9 +26,11 @@
     "productName": "the awesome wow passwallet",
     "compression": "maximum",
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "resources"
     },
     "files": [
+      "resources",
       {
         "from": "build",
         "to": "build",
@@ -45,6 +47,13 @@
         "to": "html/build",
         "filter": [
           "**/index.html"
+        ]
+      },
+      {
+        "from": "resources",
+        "to": ".",
+        "filter": [
+          "icon.png"
         ]
       },
       {

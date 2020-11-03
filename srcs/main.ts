@@ -18,6 +18,7 @@ function createWindow () {
     minWidth: 450,
     minHeight: 250,
     show: false,
+    icon: path.resolve(app.getAppPath() + '/icon.png'),
     webPreferences: {
       nodeIntegration: true,
       enableWebSQL: false,

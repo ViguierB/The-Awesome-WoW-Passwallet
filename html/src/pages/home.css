@@ -43,7 +43,7 @@
 
 @keyframes arrow_anim {
   0% {
-    transform: translateX(0);
+    transform: translateX(0) scaleY(.8) scaleX(1.2);
   }
   100% {
     transform: translateX(-40px);
