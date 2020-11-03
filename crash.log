@@ -1,4 +1,0 @@
-PID 98576 received SIGSEGV for address: 0x0
-/home/ben/work/the-awesome-wow-passwallet/node_modules/segfault-handler/build/Release/segfault-handler.node(+0x37a5)[0x7fa53543b7a5]
-/lib/x86_64-linux-gnu/libpthread.so.0(+0x153c0)[0x7fa53f1093c0]
-/home/ben/work/the-awesome-wow-passwallet/node_modules/electron/dist/electron --js-flags=--expose-gc --inspect=5858 ./dist/main.js(napi_create_string_utf8+0x39)[0x55e11768bba9]
