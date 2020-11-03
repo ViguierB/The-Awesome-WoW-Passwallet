@@ -4,6 +4,7 @@
 #include <list>
 #include "./process.h"
 #include "./native-executor.h"
+#include "./fake-keyboard-windows.h"
 
 class NativeExecutorForWindows : public NativeExecutorCommon, public Napi::ObjectWrap<NativeExecutorForWindows> {
 public:
@@ -19,6 +20,7 @@ public:
   }
 
 private:
+  HANDLE _pNativeHandle;
 
   static Napi::FunctionReference constructor;
   Napi::Value waitForWoWReady(const Napi::CallbackInfo &info);
@@ -34,7 +36,20 @@ DECLARE_INIT_FUNCTION(NativeExecutorForWindows);
 Napi::Value NativeExecutorForWindows::isWoWReady(const Napi::CallbackInfo &info){
   Napi::Env env = info.Env();
 
-  return env.Undefined();
+  auto res = WaitForInputIdle(this->_pNativeHandle, 100);
+
+  switch (res) {
+    case 0: return Napi::Boolean::New(env, true);
+    case WAIT_TIMEOUT: return Napi::Boolean::New(env, false);
+    case WAIT_FAILED: {
+      Napi::Error::New(env, "Error: WaitForInputIdle()").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    default: {
+      Napi::Error::New(env, "Error: WaitForInputIdle(): unknow error").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+  }
 }
 
 Napi::Value NativeExecutorForWindows::spawnWow(const Napi::CallbackInfo &info){
@@ -52,6 +67,8 @@ Napi::Value NativeExecutorForWindows::spawnWow(const Napi::CallbackInfo &info){
       this->_wowProc->start();
       uv_unref((uv_handle_t*) &this->_wowProc->getHandle());
 
+      this->_pNativeHandle = ::OpenProcess(PROCESS_ALL_ACCESS, TRUE, this->_wowProc->getPid());
+
     } catch (const std::exception& e) {
       Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
     }
@@ -59,8 +76,39 @@ Napi::Value NativeExecutorForWindows::spawnWow(const Napi::CallbackInfo &info){
     return env.Undefined();
 }
 
+struct handleData {
+    unsigned long processId;
+    HWND          windowHandle;
+};
+
+BOOL isMainWindow(HWND handle) {
+    return GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle);
+}
+
+BOOL CALLBACK enumWindowsCallback(HWND handle, LPARAM lParam) {
+  auto&         data = *(handleData*)lParam;
+  unsigned long processId = 0;
+  GetWindowThreadProcessId(handle, &processId);
+  if (data.processId != processId || !isMainWindow(handle))
+      return TRUE;
+  data.windowHandle = handle;
+  return FALSE;   
+}
+
 Napi::Value NativeExecutorForWindows::writeCredentials(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
+  Napi::Env   env = info.Env();
+  handleData  data;
+
+  data.processId = this->_wowProc->getPid();
+  data.windowHandle = 0;
+  ::EnumWindows(enumWindowsCallback, (LPARAM)&data);
+
+  pw::FakeKeyboardWindows fk(data.windowHandle);
+
+  fk.text(this->_account.email);
+  fk.sendTab();
+  fk.text(this->_account.password);
+  fk.sendReturn();
 
   return env.Undefined();
 }

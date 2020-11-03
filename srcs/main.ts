@@ -23,9 +23,7 @@ function createWindow () {
       enableWebSQL: false,
       webgl: false
     }
-  })
-
-  console.log("test");
+  });
 
   const db = new DB(win, dbFilePath);
   const settings = new Settings(win, db, settingsFilePath);
@@ -65,8 +63,8 @@ function createWindow () {
       });
 
       if (isDev) {
-        // win.loadURL('http://localhost:3000/');
-        win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html/')}`);
+        win.loadURL('http://localhost:3000/');
+        // win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html/')}`);
 
         if (process.platform === 'win32') {
           const devtools = new BrowserWindow();
