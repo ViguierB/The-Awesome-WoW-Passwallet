@@ -58,35 +58,29 @@ export class Settings {
 
       this.settings.dbSecretProvider = controllerKeytarType;
       this._db.changeController(DBControllerKeytar);
-      new Notification({
-        title: "PASSWALLET",
-        body: "Settings have been updated!",
-        silent: true,
-        timeoutType: 'default'
-      }).show();
+      this._win.webContents.send('show-toast', {
+        title: 'Settings',
+        message: 'Settings have been updated'
+      });
     });
 
     ipcMain.handle('set-provider-password', (_event, password) => {
       this.settings.dbSecretProvider = controllerUserPasswordType;
       this._db.changeController(DBControllerUserPassword);
       (<DBControllerUserPassword>this._db.getController()).setPassword(password);
-      new Notification({
-        title: "PASSWALLET",
-        body: "Password updated",
-        silent: true,
-        timeoutType: 'default'
-      }).show();
+      this._win.webContents.send('show-toast', {
+        title: 'Settings',
+        message: 'Password updated'
+      });
     });
 
     ipcMain.handle('update-settings', async (_event, data) => {
       this.settings = mergeDeep(this.settings, data);
       await this.save();
-      new Notification({
-        title: "PASSWALLET",
-        body: "Settings have been updated!",
-        silent: true,
-        timeoutType: 'default'
-      }).show();
+      this._win.webContents.send('show-toast', {
+        title: 'Settings',
+        message: 'Settings have been updated!'
+      });
       return;
     });
 

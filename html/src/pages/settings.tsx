@@ -3,6 +3,7 @@ import { Component } from "react";
 import "./settings.css";
 import settingsService from '../services/settings-service';
 import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
+import toastService from '../services/toast-service';
 
 type SettingsPageState = {
   wowPath: {
@@ -14,7 +15,7 @@ type SettingsPageState = {
 
 export class SettingsPage extends Component<{}, SettingsPageState> {
 
-  private _attenuator = new AttenuateEventTrigger(1500);
+  private _attenuator = new AttenuateEventTrigger(1000);
   private _passwordAttenuator = new AttenuateEventTrigger(500);
   private _password = {
     password: '',
@@ -30,16 +31,12 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
       this._password.password !== "" &&
       this._password.password === this._password.passwordVerification
     ) {
-      settingsService.setProviderPassword(this._password.password).then(() => {
-        
-      });
+      settingsService.setProviderPassword(this._password.password).then(() => {});
     }
   });
 
   private onProviderAutoSelected = this._passwordAttenuator.wrap(() => {
-    settingsService.setProviderKeytar().then(() => {
-        
-    });
+    settingsService.setProviderKeytar().then(() => {});
   });
 
   constructor(props: any) {

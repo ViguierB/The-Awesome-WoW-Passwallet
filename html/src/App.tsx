@@ -6,6 +6,7 @@ import { ReactComponent as HomeIcon } from './assets/logo-passwallet.svg';
 import { ReactComponent as SettingsIcon } from './assets/settings.svg';
 import gen from './misc/very-simple-key-generator';
 import ModalContext from './components/modal-context';
+import ToastContext from './components/toast-context';
 import { SettingsPage } from './pages/settings';
 import {
   BrowserRouter as Router,
@@ -43,6 +44,7 @@ class App extends Component<{}, {}> {
           </div>
   
           <ModalContext />
+          <ToastContext />
         </div>
       </Router>
     );

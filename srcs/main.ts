@@ -58,7 +58,11 @@ function createWindow () {
             await executor.start(user);
             // setTimeout(() => global.gc(), 0);
           } catch (e) {
-            console.error(e);
+            win.webContents.send('show-toast', {
+              title: 'error',
+              message: 'Cannot start World of Warcraft: ' + e.message,
+              type: 'error'
+            });
           }
 
       });
