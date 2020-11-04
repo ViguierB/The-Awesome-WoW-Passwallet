@@ -8,6 +8,7 @@ import './home.css';
 import modalService from '../services/modal-service';
 import AccountModal from '../components/account-modal';
 import dbService from '../services/db-service';
+import toastService from '../services/toast-service';
 
 type HomeState = {
   accounts: ({ name: string, email: string } & { key: number })[],
@@ -35,9 +36,7 @@ export class Home extends Component<{}, HomeState> {
   }
 
   onAddButtonClicked() {
-    modalService.openModal(<AccountModal item={null} />).then(() => {
-
-    })
+    modalService.openModal(<AccountModal item={null} />).then(() => {})
   }
 
   render() {
