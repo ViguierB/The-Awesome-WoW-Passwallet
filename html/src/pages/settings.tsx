@@ -15,7 +15,7 @@ type SettingsPageState = {
 
 export class SettingsPage extends Component<{}, SettingsPageState> {
 
-  private _attenuator = new AttenuateEventTrigger(1500);
+  private _attenuator = new AttenuateEventTrigger(1000);
   private _passwordAttenuator = new AttenuateEventTrigger(500);
   private _password = {
     password: '',
