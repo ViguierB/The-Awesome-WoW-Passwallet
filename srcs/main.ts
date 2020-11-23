@@ -87,6 +87,7 @@ function createWindow () {
         win.removeMenu();
       }
     }, (_e: any) => {
+      console.error(_e);
       app.quit();
     })
 

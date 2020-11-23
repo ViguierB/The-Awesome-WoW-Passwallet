@@ -185,7 +185,6 @@ export default class DBControllerUserPassword extends DBController {
   }
 
   protected async onGetSecretError(e: Error) {
-    console.log(e);
     this._password = null;
     if ((<any>e)?.reason === 'BAD_DECRYPT') {
       dialog.showErrorBox('Cannot decode database',

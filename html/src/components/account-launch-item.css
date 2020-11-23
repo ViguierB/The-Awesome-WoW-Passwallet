@@ -67,6 +67,7 @@
   width: 20px;
   margin: auto 20px;
   fill: rgb(223, 223, 223);
+  transition: filter .2s ease
 }
 
 .pw-account-item .hide-anim {

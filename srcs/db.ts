@@ -35,7 +35,14 @@ export class DB {
     ipcMain.handle('get-db', async (_event, _someArgument) => {
       return handle.getArrayForRender();
     });
-    ipcMain.handle('update-db', (e, p) => this._updateDBEvent(handle, e, p));
+    ipcMain.handle('update-db', (e, p) => {
+      try {
+        this._updateDBEvent(handle, e, p);
+      } catch (e) {
+        console.log(e);
+        return { error: true, message: e.getLocalMessage() }
+      }
+    });
     this._win.webContents.send('on-db-opened');
   }
 

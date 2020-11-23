@@ -4,6 +4,7 @@ import modalService from '../services/modal-service';
 import { ReactComponent as CloseIcon } from "../assets/close.svg";
 import "./account-modal.css";
 import dbService from '../services/db-service';
+import toastService from '../services/toast-service';
 
 type AccountModalProps = {
   item?: { name: string, email: string} | null
@@ -32,7 +33,13 @@ export default class AccountModal extends Component<AccountModalProps, AccountMo
     ((isEdit)
       ? dbService.updateUser(this.props.item?.name || "", this.state.name, this.state.email, this.state.password)
       : dbService.addUser(this.state.name, this.state.email, this.state.password)
-    ).then(() => { modalService.closeModal(); })
+    ).then((err) => {
+      if (!!err && err.error === true) { 
+        toastService.showMessage(null, err.message, 'error');
+        return;
+      }
+      modalService.closeModal();
+    })
   }
 
   render() {
@@ -43,12 +50,12 @@ export default class AccountModal extends Component<AccountModalProps, AccountMo
             <span className="modal-title">
               { ((!this.props.item) ? "Create new entry" : "Edit account").toUpperCase() }
             </span>
-            <div className="modal-close" onClick={modalService.closeModal.bind(modalService)}>
+            <div className="modal-close button" onClick={modalService.closeModal.bind(modalService)}>
               <CloseIcon className='icon' />
             </div>
           </header>
           <div className='modal-body'>
-            <input type='text' placeholder='account name'
+            <input type='text' placeholder='account name' autoFocus
               value={this.state?.name || ''} onChange={this.onFieldChange.bind(this, 'name')}
             />
             <input type='text' placeholder='email'
@@ -60,10 +67,10 @@ export default class AccountModal extends Component<AccountModalProps, AccountMo
           </div>
 
           <footer>
-            <div className='footer-button'
+            <div className='footer-button button'
               onClick={modalService.closeModal.bind(modalService)}
             >Cancel</div> 
-            <input className='footer-button' type='submit'
+            <input className='footer-button button' type='submit'
               value={(!this.props.item) ? "Create" : "Edit"}
             />
           </footer>

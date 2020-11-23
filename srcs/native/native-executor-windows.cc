@@ -58,8 +58,13 @@ Napi::Value NativeExecutorForWindows::spawnWow(const Napi::CallbackInfo &info){
     try {
 
       this->_wowProc = std::make_unique<pw::Process>(
-        this->_main_loop, this->_workingDir, this->_wowFilename, std::vector<std::string>{}
+        this->_main_loop, this->_workingDir, this->_wowFilename,
+        (this->_wowargs ? *this->wowargs : std::vector<std::string>{})
       );
+
+      if (this->_wowEnv) {
+        this->_wowProc->setEnv(*this->_wowEnv);
+      }
 
       auto& options = _wowProc->getOptions();
       options.flags = UV_PROCESS_DETACHED;

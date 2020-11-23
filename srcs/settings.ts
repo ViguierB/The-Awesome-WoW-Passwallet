@@ -7,13 +7,17 @@ import DBControllerUserPassword, { controllerType as controllerUserPasswordType 
 
 function getDefaultPath() {
   return {
-    "linux": `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft/_classic_/WowClassic.exe`,
-    "win32": "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\WowClassic.exe"
+    "linux": {
+      path: `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft/_classic_/WowClassic.exe`,
+    },
+    "win32": {
+      path: "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\WowClassic.exe"
+    }
   }
 }
 
 const defaultSettings = {
-  wowPath: getDefaultPath(),
+  wow: getDefaultPath(),
   dbSecretProvider: controllerKeytarType
 }
 
@@ -95,7 +99,7 @@ export class Settings {
   }
 
   save() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       fs.writeFile(this._filename, JSON.stringify(this.settings, null, 2), null, (err) => {
         if (!!err) { reject(err); return; }
         resolve();
@@ -104,7 +108,7 @@ export class Settings {
   }
 
   public async open() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       fs.readFile(this._filename, null, async (err, buffer) => {
         if (!!err) {
           if (err.code !== 'ENOENT') { reject(err); return; }
@@ -116,6 +120,18 @@ export class Settings {
 
         try {
           this.settings = JSON.parse(buffer.toString());
+
+          // fix settings format
+          if (!!this.settings.wowPath) {
+            this.settings.wow = {};
+            Object.keys(this.settings.wowPath).forEach(k => {
+              let v = this.settings.wowPath[k];
+
+              this.settings.wow[k] = { path: v };
+            })
+            delete this.settings.wowPath;
+          }
+
         } catch (e) {
           reject(e);
         }

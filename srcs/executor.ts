@@ -17,8 +17,16 @@ export class Executor {
 
   public async start(username: string) {
     this.nativeExecutor.setAccount(this._dbHandle.getAccount(username));
-    this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wowPath[process.platform]));
-    this.nativeExecutor.setWowName(path.basename(this._settings.settings.wowPath[process.platform]));
+    this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wow[process.platform].path));
+    this.nativeExecutor.setWowName(path.basename(this._settings.settings.wow[process.platform].path));
+    console.log("test1")
+    if (!!this._settings.settings.wow[process.platform].env) {
+      console.log("test2")
+      this.nativeExecutor.setWowEnv(this._settings.settings.wow[process.platform].env);
+    }
+    if (!!this._settings.settings.wow[process.platform].args) {
+      this.nativeExecutor.setWowArgs(this._settings.settings.wow[process.platform].args);
+    }
 
     this.nativeExecutor.spawnWow();
     try {

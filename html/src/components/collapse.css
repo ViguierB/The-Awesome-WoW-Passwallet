@@ -1,0 +1,13 @@
+.collapse-container {
+  position: relative;
+  overflow: hidden;
+  transition: height ease;
+}
+
+.collapse-container .collapse-children-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  width: -webkit-fill-available;
+}

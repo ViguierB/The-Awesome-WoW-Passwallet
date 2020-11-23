@@ -1,8 +1,16 @@
 {
   "name": "the-awesome-wow-passwallet",
   "version": "1.0.0",
-  "description": "",
+  "description": "A World of Warcraft Classic passwallet",
   "main": "dist/main.js",
+  "homepage": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet"
+  },
+  "keywords": [],
+  "author": "Ben <ben@holidev.net>",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "build-native-dev": "run-script-os",
@@ -28,6 +36,20 @@
     "directories": {
       "output": "release",
       "buildResources": "resources"
+    },
+    "linux": {
+      "target": "deb"
+    },
+    "deb": {
+      "depends": [
+        "libxdo3"
+      ]
+    },
+    "snap": {
+      "description": "A World of Warcraft Classic passwallet",
+      "buildPackages": [
+        "libxdo3"
+      ]
     },
     "files": [
       "resources",
@@ -65,13 +87,6 @@
       }
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "electron": "^10.1.5",
     "electron-builder": "^22.9.1",
@@ -84,6 +99,7 @@
     "bindings": "^1.5.0",
     "crypto": "^1.0.1",
     "keytar": "^7.0.0",
-    "nan": "^2.14.2"
+    "nan": "^2.14.2",
+    "react-jss": "^10.4.0"
   }
 }
