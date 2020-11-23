@@ -87,7 +87,7 @@ Napi::Value NativeExecutorForLinux::writeCredentials(const Napi::CallbackInfo &i
   fakeKb.text(this->_account.email);
   fakeKb.sendTab();
   fakeKb.text(this->_account.password);
-  // fakeKb.sendReturn();
+  fakeKb.sendReturn();
 
   return env.Undefined();
 }

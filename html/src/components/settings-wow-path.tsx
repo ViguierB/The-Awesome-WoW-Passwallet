@@ -75,28 +75,30 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
         </div>
         <Collapse isHidden={this.state.isCollapseHidden}>
           <div className="pcp-container">
-            <table style={{ width: "-webkit-fill-available" }}> <tbody>
-              <tr>
-                <td> Arguments </td>
-                <td>
-                  <input id="input-password"
-                    value={ this.state.wow[this.props.platform || ""]?.args || "" }
-                    placeholder="arg1 arg2 arg3 ..."
-                    onChange={ this.onChange.bind(this, 'args') }
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td> Environement </td>
-                <td>
-                  <input id="input-password"
-                    value={ this.state.wow[this.props.platform || ""]?.env || "" }
-                    placeholder="var1 var2 var3 ... (DXVK_HUD=fps)"
-                    onChange={ this.onChange.bind(this, 'env') }
-                  />
-                </td>
-              </tr>
-            </tbody> </table>
+            <table style={{ width: "-webkit-fill-available" }}>
+              <tbody>
+                <tr>
+                  <td> Arguments </td>
+                  <td>
+                    <input id="input-password"
+                      value={ this.state.wow[this.props.platform || ""]?.args || "" }
+                      placeholder="arg1 arg2 arg3 ..."
+                      onChange={ this.onChange.bind(this, 'args') }
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td> Environement </td>
+                  <td>
+                    <input id="input-password"
+                      value={ this.state.wow[this.props.platform || ""]?.env || "" }
+                      placeholder="var1 var2 var3 ... (DXVK_HUD=fps)"
+                      onChange={ this.onChange.bind(this, 'env') }
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </Collapse>
         <div style={{

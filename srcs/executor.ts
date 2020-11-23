@@ -19,9 +19,7 @@ export class Executor {
     this.nativeExecutor.setAccount(this._dbHandle.getAccount(username));
     this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wow[process.platform].path));
     this.nativeExecutor.setWowName(path.basename(this._settings.settings.wow[process.platform].path));
-    console.log("test1")
     if (!!this._settings.settings.wow[process.platform].env) {
-      console.log("test2")
       this.nativeExecutor.setWowEnv(this._settings.settings.wow[process.platform].env);
     }
     if (!!this._settings.settings.wow[process.platform].args) {
@@ -32,13 +30,13 @@ export class Executor {
     try {
       await (async () => {
         let wowReady = false;
-        for (let i = 0; i < 15; ++i) {
-          await pTimeout(1000);
+        for (let i = 0; i < 30; ++i) {
+          await pTimeout(500);
           wowReady = this.nativeExecutor.isWoWReady();
           if (wowReady) { break; }
         }
       })();
-      await pTimeout(2000);
+      await pTimeout(1500);
       this.nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);
