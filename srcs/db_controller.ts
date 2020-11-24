@@ -88,8 +88,8 @@ export default abstract class DBController {
   private   _algorithm = 'aes-256-cbc';
   protected _mainWin: BrowserWindow | null = null;
 
-  protected abstract async onGetSecretError(e: Error): Promise<{ retry: boolean }>;
-  protected abstract async getSecret(): Promise<string>;
+  protected abstract onGetSecretError(e: Error): Promise<{ retry: boolean }>;
+  protected abstract getSecret(): Promise<string>;
   protected abstract getType(): string;
 
   public setMainWindow(win: BrowserWindow) { this._mainWin = win; }
