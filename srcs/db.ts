@@ -48,7 +48,7 @@ export class DB {
 
   public save() {
     if (!!this._handle) {
-      this._db.save(this._filename, this._handle).then(() => console.log('database saved'));
+      this._db.save(this._filename, this._handle).then(() => {});
     };
   }
 
