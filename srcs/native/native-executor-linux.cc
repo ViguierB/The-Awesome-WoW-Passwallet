@@ -9,16 +9,16 @@
 
 class NativeExecutorForLinux : public NativeExecutorCommon, public Napi::ObjectWrap<NativeExecutorForLinux> {
 public:
-  static inline Napi::Object Init(Napi::Env env, Napi::Object exports);
+  static inline void Init(Napi::Env& env, Napi::Object& exports);
   NativeExecutorForLinux(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForLinux>(info) {
-    std::cout << "NativeExecutorForLinux()" << std::endl;
+    std::cout << __FUNCTION__ << std::endl;
   }
 
   ~NativeExecutorForLinux() {
     XCloseDisplay(_display);
-    std::cout << "~NativeExecutorForLinux()" << std::endl;
+    std::cout << __FUNCTION__ << std::endl;
   }
 
 private:

@@ -21,7 +21,9 @@ private:
 public:
   FakeKeyboardLinux(Display* display, Window win):
   _display(display), _win(win),
-  _xdo(xdo_new_with_opened_display(display, nullptr, false)) {}
+  _xdo(xdo_new_with_opened_display(display, nullptr, false)) {
+    this->_xdo->close_display_when_freed = 0;
+  }
 
   ~FakeKeyboardLinux() {
     xdo_free(_xdo);

@@ -31,7 +31,7 @@ protected:
 };
 
 #define DECLARE_INIT_FUNCTION(T) \
-Napi::Object T::Init(Napi::Env env, Napi::Object exports) { \
+void T::Init(Napi::Env& env, Napi::Object& exports) { \
     /* This method is used to hook the accessor and method callbacks */ \
     Napi::Function func = T::DefineClass(env, "NativeExecutor", { \
       T::InstanceMethod("spawnWow", &T::spawnWow), \
@@ -52,7 +52,6 @@ Napi::Object T::Init(Napi::Env env, Napi::Object exports) { \
     /* available. */ \
     T::constructor.SuppressDestruct(); \
     exports.Set("NativeExecutor", func); \
-    return exports; \
 }
 
 #endif // __NATIVE_EXECUTOR_H__

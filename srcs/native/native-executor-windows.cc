@@ -8,7 +8,7 @@
 
 class NativeExecutorForWindows : public NativeExecutorCommon, public Napi::ObjectWrap<NativeExecutorForWindows> {
 public:
-  static inline Napi::Object Init(Napi::Env env, Napi::Object exports);
+  static inline void  Init(Napi::Env& env, Napi::Object& exports);
   NativeExecutorForWindows(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForWindows>(info) {

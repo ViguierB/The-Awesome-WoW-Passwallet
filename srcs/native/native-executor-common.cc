@@ -81,10 +81,6 @@ Napi::Value NativeExecutorCommon::setWowEnv(const Napi::CallbackInfo &info) {
 
   split(*wenv, envStr, " ");
 
-  for (auto& e: *wenv) {
-    printf("test %s\n", e.c_str());
-  }
-
   return env.Undefined();
 }
 
