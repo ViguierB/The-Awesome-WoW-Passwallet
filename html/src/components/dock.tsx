@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import './dock.css';
 
 type DockProps = {
-  items: Array<{ text: string, icon: any, path: string, key: number, default: boolean }>
+  items: Array<{ text: string, icon: any, path: string, key: number, default?: boolean }>
 }
 
 

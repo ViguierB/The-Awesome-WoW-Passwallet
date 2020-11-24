@@ -1,6 +1,10 @@
 .collapse-container {
   position: relative;
   overflow: hidden;
+  transition: none;
+}
+
+.collapse-animated {
   transition: height ease;
 }
 

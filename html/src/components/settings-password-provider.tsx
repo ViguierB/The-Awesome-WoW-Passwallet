@@ -19,6 +19,7 @@ export default class SettingsItemPasswordProvider extends Component<SettingsItem
     password: '',
     passwordVerification: ''
   }
+  private _animRef = React.createRef<HTMLDivElement>();
 
   constructor(props: SettingsItemPasswordProviderProps) {
     super(props);
@@ -59,7 +60,10 @@ export default class SettingsItemPasswordProvider extends Component<SettingsItem
     }
 
     if (this._first === true) {
-      setTimeout(() => this._first = false);   
+      setTimeout(() => {
+        this._animRef.current?.classList.add('animated')
+        this._first = false
+      }, 100);   
     }
 
     return (
@@ -78,7 +82,7 @@ export default class SettingsItemPasswordProvider extends Component<SettingsItem
             </div>
           </div>
           <div className="provider-container-element" style={{ display: 'flex', zIndex: 0 }}>
-            <div className='selection' style={{
+            <div ref={this._animRef} className='selection' style={{
               transform: this.state.provider === 'right'
                 ? 'translateX(100%)'
                 : 'translateX(0)'

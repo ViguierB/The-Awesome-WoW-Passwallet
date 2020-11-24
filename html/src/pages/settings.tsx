@@ -6,9 +6,8 @@ import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
 import SettingsItemWowPath from '../components/settings-wow-path';
 import SettingsItemPasswordProvider from "../components/settings-password-provider";
 
-
 type SettingsPageState = {
-  settings: any,
+  settings?: any,
   platform: string | null
 };
 
@@ -25,14 +24,13 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
     super(props);
 
     this.state = {
-      settings: {},
       platform: null
     }
   }
 
   componentDidMount() {
     settingsService.settingUpdated.subcribe(this.refreshSettings.bind(this));
-    settingsService.getSettings().then(this.refreshSettings.bind(this));
+    settingsService.getSettings().then((settings: any) => this.setState({ settings }) );
     settingsService.getPlatform().then((pltf: string) => {
         this.setState({ platform: pltf });
     })
@@ -40,12 +38,14 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
 
   private async refreshSettings() {
     const settings = await settingsService.getSettings();
-    this.setState({ 
-      settings: settings
-    })
+    this.setState({ settings })
   }
 
   render() {
+    if (!this.state.settings) {
+      return null;
+    }
+
     return <div id="settings-page">
       <div id="main-container">
         <SettingsItemWowPath
@@ -55,7 +55,7 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
         />
 
         <SettingsItemPasswordProvider
-          provider={this.state.settings?.dbSecretProvider !== 'account-defined' ? 'right' : 'left'}
+          provider={this.state.settings?.dbSecretProvider === 'account-defined' ? 'left' : 'right'}
         />
       </div>
     </div>
