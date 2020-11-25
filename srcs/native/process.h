@@ -5,6 +5,12 @@
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
+#include "./environ-misc.h"
+
+// Did you see what you made me do, Windows?
+#if defined(_environ)
+ #undef _environ
+#endif
 
 namespace pw {
 
@@ -14,6 +20,7 @@ private:
   uv_process_t*             _child_req;
   uv_process_options_t      _options = {0};
   std::vector<std::string>  _arguments;
+  std::vector<std::string>  _environ;
   std::string               _workingDirectory;
 
   static void _onChildExit(uv_process_t* req, int64_t exit_status, int term_signal) {
@@ -23,7 +30,7 @@ private:
 public:
   Process(
     uv_loop_t* loop, std::string const& workingDirectory,
-    std::string const& executable, std::vector<std::string>&& args
+    std::string const& executable, std::vector<std::string>const& args
   ): _mainLoop(loop), _arguments({ executable }), _workingDirectory(workingDirectory) {
     _arguments.insert(_arguments.end(), args.begin(), args.end());
   }
@@ -37,16 +44,34 @@ public:
     }
   }
 
+  void setEnv(std::vector<std::string>& env) {
+    this->_environ.insert(this->_environ.end(), env.begin(), env.end());
+  }
+
   auto getPid() {
     return this->getHandle().pid;
   }
 
   void start() {
     std::vector<const char*> args(_arguments.size() + 1);
+    std::vector<const char*> env{};
     std::transform(_arguments.begin(), _arguments.end(), args.begin(), [] (std::string& arg) -> const char* {
       return arg.c_str();
     });
     args.push_back(nullptr);
+
+    if (this->_environ.size() > 0) {
+      for (auto **ePtr = pw::getFullEnv(); *ePtr != nullptr; ++ePtr) {
+        env.push_back(*ePtr);
+      }
+
+      std::transform(this->_environ.begin(), this->_environ.end(), env.begin(), [] (std::string& ev) -> const char* {
+        return ev.c_str();
+      });
+      env.push_back(nullptr);
+
+      this->_options.env = (char**)env.data();
+    }
 
     this->_child_req = new uv_process_t({0});
     this->_child_req->data = this;

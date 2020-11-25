@@ -20,6 +20,14 @@
   text-transform: uppercase;
 }
 
+/* #modal-delete-account header .modal-close {
+  transition: filter .3s
+} */
+
+#modal-delete-account header .modal-close:hover {
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, .7));
+}
+
 #modal-delete-account header .modal-title, #modal-delete-account header .modal-close {
   margin-top: auto;
   margin-bottom: auto;
@@ -53,6 +61,10 @@
   display: flex;
 }
 
+#modal-delete-account footer .footer-button:hover {
+  filter: brightness(1.20);
+}
+
 #modal-delete-account footer .footer-button {
   display: block;
   border: none;
@@ -66,6 +78,7 @@
   width: 100%;
   padding: 10px 0;
   text-align: center;
+  transition: filter 0.3s ease;
 }
 
 #modal-delete-account footer .delete {

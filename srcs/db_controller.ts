@@ -12,23 +12,22 @@ type dbType = {
   [account_name: string]: dbItemType
 }
 
-class DBControllerAlreadyExistException {
-  constructor(private _message: string) {}
+class DBControllerException {
 
-  public toString() { return `DBControllerAlreadyExistException: ${this._message}`; }
+  constructor(protected _message: string) {}
+
+  getLocalMessage() {
+    return this._message;
+  }
+
+  toString() {
+    return `${this.constructor.name} ${this._message}`;
+  }
 }
 
-class DBControllerBadTypeException {
-  constructor(private _message: string) {}
-
-  public toString() { return `DBControllerBadTypeException: ${this._message}`; }
-}
-
-class DBControllerNotFoundException {
-  constructor(private _message: string) {}
-
-  public toString() { return `DBControllerNotFoundException: ${this._message}`; }
-}
+class DBControllerAlreadyExistException extends DBControllerException {}
+class DBControllerBadTypeException extends DBControllerException {}
+class DBControllerNotFoundException extends DBControllerException {}
 
 export class DBHandle {
 
@@ -59,7 +58,7 @@ export class DBHandle {
         password: content.password
       };
     } else {
-      throw new DBControllerAlreadyExistException("This account alredy exist, you must use updateAccount()");
+      throw new DBControllerAlreadyExistException("This account already exist");
     }
   }
 
@@ -89,8 +88,8 @@ export default abstract class DBController {
   private   _algorithm = 'aes-256-cbc';
   protected _mainWin: BrowserWindow | null = null;
 
-  protected abstract async onGetSecretError(e: Error): Promise<{ retry: boolean }>;
-  protected abstract async getSecret(): Promise<string>;
+  protected abstract onGetSecretError(e: Error): Promise<{ retry: boolean }>;
+  protected abstract getSecret(): Promise<string>;
   protected abstract getType(): string;
 
   public setMainWindow(win: BrowserWindow) { this._mainWin = win; }

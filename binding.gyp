@@ -16,11 +16,13 @@
         ['OS is "win"', {
           'sources': [
             'srcs/native/native-executor-windows.cc',
+            'srcs/native/environ-windows.cc',
           ],
         }],
         ['OS not in ["mac", "win"]', {
           'sources': [
             'srcs/native/native-executor-linux.cc',
+            'srcs/native/environ-linux.cc',
           ],
           'cflags': [
             '<!(pkg-config --cflags x11)',

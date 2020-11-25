@@ -9,16 +9,16 @@
 
 class NativeExecutorForLinux : public NativeExecutorCommon, public Napi::ObjectWrap<NativeExecutorForLinux> {
 public:
-  static inline Napi::Object Init(Napi::Env env, Napi::Object exports);
+  static inline void Init(Napi::Env& env, Napi::Object& exports);
   NativeExecutorForLinux(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForLinux>(info) {
-    std::cout << "NativeExecutorForLinux()" << std::endl;
+    std::cout << __FUNCTION__ << std::endl;
   }
 
   ~NativeExecutorForLinux() {
     XCloseDisplay(_display);
-    std::cout << "~NativeExecutorForLinux()" << std::endl;
+    std::cout << __FUNCTION__ << std::endl;
   }
 
 private:
@@ -53,9 +53,19 @@ Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){
 
     try {
 
+      std::vector<std::string> args{ this->_wowFilename };
+
+      if (this->_wowargs) {
+        args.insert(args.end(), this->_wowargs->begin(), this->_wowargs->end());
+      }
+
       this->_wowProc = std::make_unique<pw::Process>(
-        this->_main_loop, this->_workingDir, "wine", std::vector<std::string>{ this->_wowFilename }
+        this->_main_loop, this->_workingDir, "wine", args
       );
+
+      if (this->_wowEnv) {
+        this->_wowProc->setEnv(*this->_wowEnv);
+      }
 
       auto& options = _wowProc->getOptions();
       options.flags = UV_PROCESS_DETACHED;

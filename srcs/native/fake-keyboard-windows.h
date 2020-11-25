@@ -9,8 +9,40 @@ class FakeKeyboardWindows {
 private:
   HWND  _win;
 
+  struct handleData {
+    unsigned long processId;
+    HWND          windowHandle;
+  };
+
+  static BOOL isMainWindow(HWND handle) {
+    return ::GetWindow(handle, GW_OWNER) == (HWND)0 && ::IsWindowVisible(handle);
+  }
+
+  static BOOL CALLBACK enumWindowsCallback(HWND handle, LPARAM lParam) {
+    auto&         data = *(handleData*)lParam;
+    unsigned long processId = 0;
+
+    ::GetWindowThreadProcessId(handle, &processId);
+    if (data.processId != processId || !FakeKeyboardWindows::isMainWindow(handle)) {
+      return TRUE;
+    }
+    data.windowHandle = handle;
+    return FALSE;   
+  }
+
 public:
-  FakeKeyboardWindows(HWND win): _win(win) {};
+  FakeKeyboardWindows(int pid) {
+    handleData  data;
+
+    data.processId = pid;
+    data.windowHandle = 0;
+    ::EnumWindows(&FakeKeyboardWindows::enumWindowsCallback, (LPARAM)&data);
+
+    if (data.windowHandle == 0) {
+      throw std::runtime_error("cannot find main window");
+    }
+    this->_win = data.windowHandle;
+  }
 
   void sendTab() { 
     std::vector<INPUT> inputs;

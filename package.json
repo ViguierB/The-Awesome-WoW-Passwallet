@@ -1,8 +1,16 @@
 {
   "name": "the-awesome-wow-passwallet",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.0-beta",
+  "description": "A World of Warcraft Classic passwallet",
   "main": "dist/main.js",
+  "homepage": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet"
+  },
+  "keywords": [],
+  "author": "Ben <ben@holidev.net>",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "build-native-dev": "run-script-os",
@@ -13,9 +21,9 @@
     "build-native:linux:darwin": "rm -r build; electron-rebuild -f -w native_executor",
     "build-all": "npm run build-native && npm run build",
     "build-all-dev": "npm run build-native-dev && npm run build",
-    "build-front": "sh -c 'cd html; npm run build'",
+    "build-front": "bash -c 'cd html; bash -c \"npm run build\"'",
     "start-dev": "run-script-os",
-    "start-dev:linux:darwin": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js",
+    "start-dev:linux:darwin": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 --gdb ./dist/main.js",
     "start-dev:win32": "bash -c 'env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js'",
     "start": "electron ./dist/main.js",
     "dist": "electron-builder build",
@@ -24,10 +32,26 @@
   "build": {
     "appId": "com.holidev.passwallet",
     "productName": "the awesome wow passwallet",
-    "compression": "maximum",
     "directories": {
       "output": "release",
       "buildResources": "resources"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "appimage"
+      ]
+    },
+    "deb": {
+      "depends": [
+        "libxdo3"
+      ]
+    },
+    "snap": {
+      "description": "A World of Warcraft Classic passwallet",
+      "buildPackages": [
+        "libxdo3"
+      ]
     },
     "files": [
       "resources",
@@ -65,25 +89,19 @@
       }
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
-    "electron": "^10.1.5",
+    "electron": "^10.1.6",
     "electron-builder": "^22.9.1",
     "electron-rebuild": "^2.3.2",
-    "node-addon-api": "^3.0.2",
+    "node-addon-api": "2.0.2",
     "run-script-os": "^1.1.3",
-    "typescript": "^4.0.3"
+    "typescript": "^4.1.2"
   },
   "dependencies": {
     "bindings": "^1.5.0",
     "crypto": "^1.0.1",
-    "keytar": "^7.0.0",
-    "nan": "^2.14.2"
+    "keytar": "^7.2.0",
+    "nan": "^2.14.2",
+    "react-jss": "^10.5.0"
   }
 }

@@ -1,0 +1,12 @@
+.wow-path > * {
+  /* margin: 10px 0; */
+}
+
+.wow-path input[type="file"] {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+}

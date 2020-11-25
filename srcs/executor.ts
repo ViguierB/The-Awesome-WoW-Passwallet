@@ -8,32 +8,39 @@ const pTimeout = (t: number) => new Promise((resolve) => setTimeout(resolve, t))
 
 export class Executor {
 
-  nativeExecutor = new NativeExecutor()
-
   constructor(
     private _settings: Settings,
     private _dbHandle: DBHandle
   ) {}
 
   public async start(username: string) {
-    this.nativeExecutor.setAccount(this._dbHandle.getAccount(username));
-    this.nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wowPath[process.platform]));
-    this.nativeExecutor.setWowName(path.basename(this._settings.settings.wowPath[process.platform]));
+    const nativeExecutor = new NativeExecutor()
+    nativeExecutor.setAccount(this._dbHandle.getAccount(username));
+    nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wow[process.platform].path));
+    nativeExecutor.setWowName(path.basename(this._settings.settings.wow[process.platform].path));
+    if (!!this._settings.settings.wow[process.platform].env) {
+      nativeExecutor.setWowEnv(this._settings.settings.wow[process.platform].env);
+    }
+    if (!!this._settings.settings.wow[process.platform].args) {
+      nativeExecutor.setWowArgs(this._settings.settings.wow[process.platform].args);
+    }
 
-    this.nativeExecutor.spawnWow();
+    nativeExecutor.spawnWow();
     try {
       await (async () => {
         let wowReady = false;
-        for (let i = 0; i < 15; ++i) {
-          await pTimeout(1000);
-          wowReady = this.nativeExecutor.isWoWReady();
-          if (wowReady) { break; }
+        for (let i = 0; i < 30; ++i) {
+          await pTimeout(500);
+          wowReady = nativeExecutor.isWoWReady();
+          if (wowReady) { return; }
         }
+        throw new Error('Window handler not found');
       })();
-      await pTimeout(2000);
-      this.nativeExecutor.writeCredentials();
+      await pTimeout(1800);
+      nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);
+      throw e;
     }
   }
 
