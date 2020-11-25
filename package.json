@@ -19,9 +19,9 @@
     "build-native-dev:linux:darwin": "rm -r ./build; electron-rebuild --debug -f -w native_executor",
     "build-native:win32": "bash -c 'rm -r ./build; electron-rebuild'",
     "build-native:linux:darwin": "rm -r build; electron-rebuild -f -w native_executor",
-    "build-all": "npm run build-front && npm run build-native && npm run build",
+    "build-all": "npm run build-native && npm run build",
     "build-all-dev": "npm run build-native-dev && npm run build",
-    "build-front": "sh -c 'cd html; npm run build'",
+    "build-front": "bash -c 'cd html; bash -c \"npm run build\"'",
     "start-dev": "run-script-os",
     "start-dev:linux:darwin": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 --gdb ./dist/main.js",
     "start-dev:win32": "bash -c 'env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js'",
@@ -37,7 +37,10 @@
       "buildResources": "resources"
     },
     "linux": {
-      "target": [ "deb", "appimage" ]
+      "target": [
+        "deb",
+        "appimage"
+      ]
     },
     "deb": {
       "depends": [

@@ -5,14 +5,12 @@
 #include <stdexcept>
 #include <vector>
 #include <algorithm>
-#include <unistd.h>
+#include "./environ-misc.h"
 
-// #if !defined(__PW_ENVIRON__)
-// #define __PW_ENVIRON__
-
-// extern char **environ;
-
-// #endif
+// Did you see what you made me do, Windows?
+#if defined(_environ)
+ #undef _environ
+#endif
 
 namespace pw {
 
@@ -63,11 +61,11 @@ public:
     args.push_back(nullptr);
 
     if (this->_environ.size() > 0) {
-      for (auto **ePtr = ::environ; *ePtr != nullptr; ++ePtr) {
+      for (auto **ePtr = pw::getFullEnv(); *ePtr != nullptr; ++ePtr) {
         env.push_back(*ePtr);
       }
 
-      std::transform(_environ.begin(), _environ.end(), env.begin(), [] (std::string& ev) -> const char* {
+      std::transform(this->_environ.begin(), this->_environ.end(), env.begin(), [] (std::string& ev) -> const char* {
         return ev.c_str();
       });
       env.push_back(nullptr);
