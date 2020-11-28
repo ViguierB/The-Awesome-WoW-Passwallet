@@ -27,7 +27,7 @@
   margin: auto auto auto 10px;
 }
 
-.pw-account-item .text-container:hover .container-left-button {
+.pw-account-item .text-container:hover .container-left-button:not(.dragging) {
   width: 100%;
 }
 

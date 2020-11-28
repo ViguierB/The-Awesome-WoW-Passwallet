@@ -9,17 +9,120 @@ import AccountModal from "./account-modal";
 import AccountDeleteModal from "./account-delete-modal";
 import executorService from '../services/executor-service';
 
-export type AccountLaunchItemProps = {
-  name: string, email: string
+export type AccountLaunchItemPropsBase = {
+  name: string, email: string, index: number
+}
+
+type AccountLaunchItemProps = AccountLaunchItemPropsBase & {
+  isDragging: boolean,
+  onDraggingStart: (fitter: (fitYValue: number) => void) => void,
+  onDraggingEnd: () => void,
+  onDragEnter: () => void
 };
 
-export default class AccountLaunchItem extends Component<AccountLaunchItemProps, { launchInProgress: boolean }> {
+type AccountLaunchListState = {
+  launchInProgress: boolean
+}
+
+export default class AccountLaunchItem extends Component<AccountLaunchItemProps, AccountLaunchListState> {
+
+  private _dragElem = React.createRef<HTMLDivElement>();
 
   constructor(props: AccountLaunchItemProps) {
     super(props);
 
     this.state = {
       launchInProgress: false
+    }
+  }
+
+  private _getTranslateValues (element: HTMLElement) {
+    const style = window.getComputedStyle(element)
+    const matrix = style['transform']
+  
+    if (matrix === 'none') {
+      return { x: 0, y: 0, z: 0 };
+    }
+  
+    const matrixType = matrix.includes('3d') ? '3d' : '2d'
+    const matrixValues = (matrix.match(/matrix.*\((.+)\)/) as any)[1]?.split(', ')
+    if (matrixType === '2d') {
+      return {
+        x: Number.parseInt(matrixValues[4]),
+        y: Number.parseInt(matrixValues[5]),
+        z: 0
+      }
+    }
+    if (matrixType === '3d') {
+      return {
+        x: Number.parseInt(matrixValues[12]),
+        y: Number.parseInt(matrixValues[13]),
+        z: Number.parseInt(matrixValues[14])
+      }
+    }
+    return { x: 0, y: 0, z: 0 };
+  }
+
+  componentDidMount() {
+    const d = this._dragElem.current;
+    if (!d) {
+      console.error('Item not created, it cannot set as draggable')
+      return;
+    }
+    
+    let dragging = false;
+    let position = {
+      initial: { x: 0, y: 0 },
+      current: { x: 0, y: 0 }
+    }
+    d.onmousedown = (e) => {
+      e = e || window.event;
+      e.preventDefault();
+
+      const initial = this._getTranslateValues(d);
+      position.initial = {
+        x: e.pageX - initial.x,
+        y: e.pageY - initial.y
+      };
+      let fitterY = 0;
+      document.onmousemove = (e3) => {
+        
+        (d.parentElement as HTMLElement).style.zIndex = '1000';
+        (d.parentElement as HTMLElement).style.pointerEvents = 'none'
+        this.props.onDraggingStart((fy) => fitterY += fy);
+        dragging = true;
+
+        document.onmousemove = (e2) => {
+          e2 = e2 || window.event;
+          e2.preventDefault();
+          position = {
+            current:  {
+              x: position.initial.x - e2.pageX,
+              y: position.initial.y - e2.pageY
+            },
+            initial: position.initial
+          };
+          // d.style.transform = `translate(${-position.current.x + "px"}, ${-position.current.y + "px"})`
+          d.style.transform = `translate(0px, ${-(position.current.y + fitterY) + "px"})`
+        }
+      }
+      document.onmouseup = () => {
+        document.onmouseup = null;
+        document.onmousemove = null;
+        if (dragging) {
+          dragging = false;
+          (d.parentElement as HTMLElement).style.zIndex = '0';
+          (d.parentElement as HTMLElement).style.pointerEvents = '';
+          d.style.transform = "";
+          this.props.onDraggingEnd();
+        }
+      }
+    }
+
+    d.onmouseenter = () => {
+      if (this.props.isDragging && !dragging) {
+         this.props.onDragEnter();
+      }
     }
   }
 
@@ -49,12 +152,18 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
   //   })
   // }
 
+  componentDidUpdate(prevProps: AccountLaunchItemProps) {
+    if (prevProps.isDragging !== this.props.isDragging) {
+      this.forceUpdate();
+    }
+  }
+
   render() {
     return (
-      <div className='pw-account-item'>
+      <div className='pw-account-item' ref={this._dragElem}>
         <div className='main-container'>
           <div className='text-container'>
-            <div className='container-left-button'>
+            <div className={'container-left-button' + (this.props.isDragging ? ' dragging' : '') }>
               <div className='icon-container delete-button' onClick={() => this.onDeleteButtonClicked()}>
                 <DeleteIcon className='icon delete-icon'/>
               </div>

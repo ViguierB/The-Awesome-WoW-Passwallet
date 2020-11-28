@@ -8,7 +8,6 @@ import './home.css';
 import modalService from '../services/modal-service';
 import AccountModal from '../components/account-modal';
 import dbService from '../services/db-service';
-import toastService from '../services/toast-service';
 
 type HomeState = {
   accounts: ({ name: string, email: string } & { key: number })[],
@@ -46,7 +45,7 @@ export class Home extends Component<{}, HomeState> {
 
     return <div id="home-page">
       <div id='accounts-container'>
-        <AccountLaunchList items={ this.state.accounts } />
+        <AccountLaunchList items={ this.state.accounts.map((account, i) => Object.assign(account, { index: i })) } />
       </div>
       <div className='button-add' onClick={ this.onAddButtonClicked.bind(this) }>
         { (this.state.accounts.length === 0) ? (

@@ -23,9 +23,9 @@ export class ToastItem extends Component<ToastItemPropsInternal, {}> {
   private _forceClose= false;
   private _closeTimeoutHandle?: NodeJS.Timeout;
 
-  constructor(props: ToastItemPropsInternal) {
-    super(props);
-  }
+  // constructor(props: ToastItemPropsInternal) {
+  //   super(props);
+  // }
 
   componentDidMount() {
     this._itemRef.current?.addEventListener('mouseenter', () => {
