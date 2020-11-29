@@ -15,9 +15,9 @@ export type AccountLaunchItemPropsBase = {
 
 type AccountLaunchItemProps = AccountLaunchItemPropsBase & {
   isDragging: boolean,
-  onDraggingStart: (fitter: (fitYValue: number) => void) => void,
+  onDraggingStart: () => void,
   onDraggingEnd: () => void,
-  onDragEnter: () => void
+  onIndexChange: (increment: '+1' | '-1') => void
 };
 
 type AccountLaunchListState = {
@@ -84,12 +84,13 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
         x: e.pageX - initial.x,
         y: e.pageY - initial.y
       };
+      let initialIndex = this.props.index;
       let fitterY = 0;
       document.onmousemove = (e3) => {
         
         (d.parentElement as HTMLElement).style.zIndex = '1000';
         (d.parentElement as HTMLElement).style.pointerEvents = 'none'
-        this.props.onDraggingStart((fy) => fitterY += fy);
+        this.props.onDraggingStart();
         dragging = true;
 
         document.onmousemove = (e2) => {
@@ -102,8 +103,21 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
             },
             initial: position.initial
           };
-          // d.style.transform = `translate(${-position.current.x + "px"}, ${-position.current.y + "px"})`
-          d.style.transform = `translate(0px, ${-(position.current.y + fitterY) + "px"})`
+          const sp = window.getComputedStyle(d.parentElement as HTMLElement);
+          const h = (
+            parseInt(sp.getPropertyValue('height'))
+            + parseInt(sp.getPropertyValue('margin-bottom'))
+            + parseInt(sp.getPropertyValue('margin-top'))
+          );
+          fitterY = h * (initialIndex - this.props.index);
+          if (position.current.y - fitterY > h * .666) {
+            this.props.onIndexChange('-1');
+          }
+          if (position.current.y - fitterY < -h * .666) {
+            this.props.onIndexChange('+1');
+          }
+
+          d.style.transform = `translate(0px, ${-(position.current.y - fitterY) + "px"})`
         }
       }
       document.onmouseup = () => {
@@ -116,12 +130,6 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           d.style.transform = "";
           this.props.onDraggingEnd();
         }
-      }
-    }
-
-    d.onmouseenter = () => {
-      if (this.props.isDragging && !dragging) {
-         this.props.onDragEnter();
       }
     }
   }

@@ -13,7 +13,6 @@ type AccountLaunchListState = {
 export default class AccountLaunchList extends Component<AccountLaunchListProps, AccountLaunchListState> {
 
   private _isDraggingIndex = 0;
-  private _isDraggingFitter?: (fitYValue: number) => void;
 
   constructor(props: AccountLaunchListProps) {
     super(props);
@@ -28,30 +27,35 @@ export default class AccountLaunchList extends Component<AccountLaunchListProps,
       <ul style={{
         margin: 0,
         padding: 0,
+        display: 'flex',
+        flexDirection: 'column'
       }}>{
         this.props.items.sort((a, b) => a.index - b.index).map(item => (
           <li style={{
             listStyleType: 'none',
-            margin: '15px 5px',
+            marginTop: '7px',
+            marginBottom: '7px',
             position: 'relative'
           }} key={item.key}>
-            <AccountLaunchItem onDraggingStart={(fitterY) => {
-              this._isDraggingFitter = fitterY;
+            <AccountLaunchItem onDraggingStart={() => {
               this._isDraggingIndex = item.index;
               this.setState({ isDragging: true });
             }} onDraggingEnd={() => {
               this.setState({ isDragging: false });
-            }} onDragEnter={() => {
-              let itemIndexStart = this._isDraggingIndex;
-              let itemIndexTo = this._isDraggingIndex = item.index;
+            }} onIndexChange={(increment) => {
+              let itemIndexStart = item.index;
+              let itemIndexTo = item.index + (increment === "+1" ? 1 : -1);
 
-              let i1 = this.props.items.findIndex(item => item.index === itemIndexStart);
-              let i2 = this.props.items.findIndex(item => item.index === itemIndexTo);
+              let i1 = this.props.items.findIndex(it => it.index === itemIndexStart);
+              let i2 = this.props.items.findIndex(it => it.index === itemIndexTo);
+
+              if (i1 === -1 || i2 === -1) {
+                return;
+              }
+
               let tmp = this.props.items[i1].index;
               this.props.items[i1].index = this.props.items[i2].index;
               this.props.items[i2].index = tmp
-
-              this._isDraggingFitter?.call(null, (45 + 15) * (itemIndexStart < itemIndexTo ? 1 : -1) );
               
               this.forceUpdate();
             }} name={ item.name } email={ item.email } isDragging={this.state.isDragging} index={item.index} />
