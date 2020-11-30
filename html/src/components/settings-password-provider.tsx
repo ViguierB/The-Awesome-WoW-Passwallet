@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, CSSProperties } from "react";
 import settingsService from "../services/settings-service";
 import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
 import "./settings-password-provider.css";
@@ -66,19 +66,30 @@ export default class SettingsItemPasswordProvider extends Component<SettingsItem
       }, 100);   
     }
 
+    const buttonStyle: CSSProperties = {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      cursor: 'pointer',
+    }
+
     return (
       <div className="settings-field">
         <label> Password provider: </label>
         <div className="provider-container">
           <div className="provider-container-element" style={{ display: 'flex', zIndex: 1 }}>
-            <div className='left' onClick={() => {
+            <div style={buttonStyle} onClick={() => {
               this.setState({ provider: 'left' })
               this.onProviderAutoSelected();
             }}>
-              Auto
+              <div className='left'>
+                Auto
+              </div>
             </div>
-            <div className='right' onClick={() => this.setState({ provider: 'right' })}>
-              Custom
+            <div style={buttonStyle} onClick={() => this.setState({ provider: 'right' })}>
+              <div className='right'>
+                Custom
+              </div>
             </div>
           </div>
           <div className="provider-container-element" style={{ display: 'flex', zIndex: 0 }}>

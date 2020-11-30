@@ -30,7 +30,7 @@ class DBService {
   }
 
   public async getDB() {
-    return this._ipc.invoke('get-db') as Promise<Array<{name: string, email: string}>>;
+    return this._ipc.invoke('get-db') as Promise<Array<{name: string, email: string, index: number}>>;
   }
 
   public async addUser(name: string, email: string, password: string) {
@@ -41,6 +41,11 @@ class DBService {
   public async updateUser(lastName: string, name: string, email: string, password: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
     return this._ipc.invoke('update-db', { lastName, name, email, password, command: 'update'})
+  }
+
+  public async updateSorting(sortArray: {name: string, index: number}[]) {
+    if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
+    return this._ipc.invoke('update-db', { sortArray, command: 'update-sorting'})
   }
 
   public async removeUser(name: string) {

@@ -1,11 +1,15 @@
-import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { app, BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
+
+const DBVERSION = 1;
+
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 
 type dbItemType = {
   email: string,
-  password: string
+  password: string,
+  index?: number
 }
 
 type dbType = {
@@ -44,7 +48,8 @@ export class DBHandle {
       }
       this._db[name] = {
         email: content.email,
-        password: content.password
+        password: content.password,
+        index: Object.keys(this._db).length
       };
     } else {
       throw new DBControllerNotFoundException("This account is not found, if you want to create it: turn creat parameter to true");
@@ -55,7 +60,8 @@ export class DBHandle {
     if (!this._db[name]) {
       this._db[name] = {
         email: content.email,
-        password: content.password
+        password: content.password,
+        index: content.index || Object.keys(this._db).length
       };
     } else {
       throw new DBControllerAlreadyExistException("This account already exist");
@@ -64,16 +70,25 @@ export class DBHandle {
 
   public remove(name: string) {
     if (!!this._db[name]) {
-      delete this._db[name]
+      let save = this._db[name];
+      delete this._db[name];
+      return save;
     } else {
       throw new DBControllerNotFoundException("This account is not found");
     }
   }
 
+  public applySort(sortArray: [{ name: string, index: number }]) {
+    sortArray.forEach(item => {
+      (this._db[item.name] || {}).index = item.index
+    });
+  }
+
   public getArrayForRender() {
     return Object.keys(this._db).map(key => ({
       name: key,
-      email: this._db[key].email
+      email: this._db[key].email,
+      index: this._db[key].index
     }));
   }
 
@@ -94,6 +109,22 @@ export default abstract class DBController {
 
   public setMainWindow(win: BrowserWindow) { this._mainWin = win; }
 
+  private _fixDataBaseDataIfNeeded(dbOptions: ThenArg<ReturnType<DBController['_lock']>>, db: any) {
+    try {
+      db = JSON.parse(db.toString());
+    } catch {
+      throw new Error('This file is not a valid JSON')
+    }
+    switch (dbOptions.v) {
+      case (1): return db;
+      case (undefined): {
+        Object.keys(db).forEach((k, i) => db[k].index = i);
+        return db;
+      }
+    }
+    throw new Error('The account.db file is corrupted !');
+  }
+
   private async _lock(buffer: Buffer) {
     const secret = await this.getSecret();
     const iv = crypto.randomBytes(16);
@@ -103,10 +134,10 @@ export default abstract class DBController {
 
     const c = Buffer.concat([ cipher.update(buffer), cipher.final() ]);
 
-    return { iv: iv.toString('base64'), c: c.toString('base64'), e: 'base64', t: this.getType() };
+    return { iv: iv.toString('base64'), c: c.toString('base64'), e: 'base64', t: this.getType(), v: DBVERSION };
   }
 
-  private async _unlock(locked: { iv: string, c: string, e: string, t: string }): Promise<Buffer> {
+  private async _unlock(locked: ThenArg<ReturnType<DBController['_lock']>>): Promise<Buffer> {
     if (locked.t !== this.getType()) {
       throw new DBControllerBadTypeException(`Controller type is not matching (expected '${this.getType()}', got '${locked.t}'`);
     }
@@ -142,17 +173,11 @@ export default abstract class DBController {
         
         try {
           const locked = JSON.parse(buffer.toString());
-          var unlockedbd = await this._unlock(locked);
+          var unlockedbd = this._fixDataBaseDataIfNeeded(locked, await this._unlock(locked));
+          resolve(new DBHandle(unlockedbd));
         } catch (e) {
           reject(e);
           return;
-        }
-
-        try {
-          const db = JSON.parse(unlockedbd.toString());
-          resolve(new DBHandle(db));
-        } catch (_e) {
-          reject("This file is not a valid JSON");
         }
       })
     });
@@ -173,6 +198,29 @@ export default abstract class DBController {
         if (!!err) { reject(err); return; }
         resolve();
       })
+    });
+  }
+
+  public static getProviderCtor(filepath: string, controllers: {type: string, ctor: typeof DBController}[], cdefault: typeof DBController) {
+    return new Promise<typeof DBController>((resolve, reject) => {
+      fs.readFile(filepath, null, async (err, buffer) => {
+        if (err) {
+          if (err.code !== 'ENOENT') { reject(err); return; }
+
+          // return a new empty DBHandle in case of file not found
+          resolve(cdefault);
+        }
+
+        const { t } = JSON.parse(buffer.toString());
+
+        controllers.some((v) => {
+          if (v.type === t) {
+            resolve(v.ctor);
+            return true;
+          }
+          return false;
+        })
+      });
     });
   }
 

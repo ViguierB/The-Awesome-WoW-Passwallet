@@ -59,44 +59,66 @@ class ToastService {
     }
 
     const iconStyle: CSSProperties = {
-      width: '52px',
-      fill: 'rgb(223, 223, 223)'
+      width: '42px',
+      fill: 'rgb(223, 223, 223)',
+      marginRight: '15px',
     }
 
     const textStyle: CSSProperties = {
-      marginLeft: '15px',
       marginTop: 'auto',
       marginBottom: 'auto',
-      color: 'rgb(223, 223, 223)'
+      color: 'rgb(223, 223, 223)',
+      fontSize: 'smaller'
+    }
+
+    let assingInnerText = () => {
+      const ref = React.createRef<HTMLSpanElement>();
+      
+      let f = () => setTimeout(() => {
+        const c = ref.current;
+
+        if (!c) { f(); return; }
+        c.innerHTML = message.replace(/\n/g,"<br>");
+      });
+
+      f();
+
+      return ref;
     }
 
     switch (type) {
+
       case 'message': {
+        const ref = assingInnerText();
         if (!!options?.icon) {
           const icon = React.createFactory(options.icon)({ style: iconStyle });
+
           return <div style={containerStyle}>
             {icon}
-            <span style={textStyle}> {message} </span>
+            <span style={textStyle} ref={ref}> </span>
           </div>;
         }
-        return message;
+        return <span style={textStyle} ref={ref}> </span>;
       }
       case 'error': {
+        const ref = assingInnerText();
         return <div style={containerStyle}>
           <ErrorIcon style={iconStyle} />
-          <span style={textStyle}> {message} </span>
+          <span style={textStyle} ref={ref}> </span>
         </div>;
       }
       case 'info': {
+        const ref = assingInnerText();
         return <div style={containerStyle}>
           <InfoIcon style={iconStyle} />
-          <span style={textStyle}> {message} </span>
+          <span style={textStyle} ref={ref}> </span>
         </div>;
       }
       case 'warn': {
+        const ref = assingInnerText();
         return <div style={containerStyle}>
           <WarnIcon style={iconStyle} />
-          <span style={textStyle}> {message} </span>
+          <span style={textStyle} ref={ref}> </span>
         </div>;
       }
     }

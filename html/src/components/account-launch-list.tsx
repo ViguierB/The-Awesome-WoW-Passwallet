@@ -3,7 +3,8 @@ import { Component } from "react";
 import AccountLaunchItem, { AccountLaunchItemPropsBase } from "./account-launch-item";
 
 type AccountLaunchListProps = {
-  items: Array<AccountLaunchItemPropsBase & { key: number }>
+  items: Array<AccountLaunchItemPropsBase & { key: number }>,
+  onSortingChange: (sorting: { name: string, index: number }[]) => void
 }
 
 type AccountLaunchListState = {
@@ -42,9 +43,10 @@ export default class AccountLaunchList extends Component<AccountLaunchListProps,
               this.setState({ isDragging: true });
             }} onDraggingEnd={() => {
               this.setState({ isDragging: false });
+              this.props.onSortingChange(this.props.items.map(it => ({ name: it.name, index: it.index })))
             }} onIndexChange={(increment) => {
               let itemIndexStart = item.index;
-              let itemIndexTo = item.index + (increment === "+1" ? 1 : -1);
+              let itemIndexTo = item.index + increment;
 
               let i1 = this.props.items.findIndex(it => it.index === itemIndexStart);
               let i2 = this.props.items.findIndex(it => it.index === itemIndexTo);

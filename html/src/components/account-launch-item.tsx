@@ -17,7 +17,7 @@ type AccountLaunchItemProps = AccountLaunchItemPropsBase & {
   isDragging: boolean,
   onDraggingStart: () => void,
   onDraggingEnd: () => void,
-  onIndexChange: (increment: '+1' | '-1') => void
+  onIndexChange: (increment: 1 | -1) => void
 };
 
 type AccountLaunchListState = {
@@ -36,33 +36,6 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
     }
   }
 
-  private _getTranslateValues (element: HTMLElement) {
-    const style = window.getComputedStyle(element)
-    const matrix = style['transform']
-  
-    if (matrix === 'none') {
-      return { x: 0, y: 0, z: 0 };
-    }
-  
-    const matrixType = matrix.includes('3d') ? '3d' : '2d'
-    const matrixValues = (matrix.match(/matrix.*\((.+)\)/) as any)[1]?.split(', ')
-    if (matrixType === '2d') {
-      return {
-        x: Number.parseInt(matrixValues[4]),
-        y: Number.parseInt(matrixValues[5]),
-        z: 0
-      }
-    }
-    if (matrixType === '3d') {
-      return {
-        x: Number.parseInt(matrixValues[12]),
-        y: Number.parseInt(matrixValues[13]),
-        z: Number.parseInt(matrixValues[14])
-      }
-    }
-    return { x: 0, y: 0, z: 0 };
-  }
-
   componentDidMount() {
     const d = this._dragElem.current;
     if (!d) {
@@ -74,22 +47,25 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
     let position = {
       initial: { x: 0, y: 0 },
       current: { x: 0, y: 0 }
-    }
+    };
+    (d.parentElement as HTMLElement).style.transition = 'transform .2s linear';
+    d.style.transition = 'box-shadow .2s linear';
     d.onmousedown = (e) => {
       e = e || window.event;
       e.preventDefault();
 
-      const initial = this._getTranslateValues(d);
       position.initial = {
-        x: e.pageX - initial.x,
-        y: e.pageY - initial.y
+        x: e.pageX,
+        y: e.pageY
       };
       let initialIndex = this.props.index;
       let fitterY = 0;
       document.onmousemove = (e3) => {
         
         (d.parentElement as HTMLElement).style.zIndex = '1000';
-        (d.parentElement as HTMLElement).style.pointerEvents = 'none'
+        (d.parentElement as HTMLElement).style.pointerEvents = 'none';
+        (d.parentElement as HTMLElement).style.transform = 'scale(1.05)';
+        d.style.boxShadow = '0px 5px 7px rgba(0, 0, 0, .4)'
         this.props.onDraggingStart();
         dragging = true;
 
@@ -111,10 +87,10 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           );
           fitterY = h * (initialIndex - this.props.index);
           if (position.current.y - fitterY > h * .666) {
-            this.props.onIndexChange('-1');
+            this.props.onIndexChange(-1);
           }
           if (position.current.y - fitterY < -h * .666) {
-            this.props.onIndexChange('+1');
+            this.props.onIndexChange(+1);
           }
 
           d.style.transform = `translate(0px, ${-(position.current.y - fitterY) + "px"})`
@@ -127,7 +103,9 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           dragging = false;
           (d.parentElement as HTMLElement).style.zIndex = '0';
           (d.parentElement as HTMLElement).style.pointerEvents = '';
-          d.style.transform = "";
+          (d.parentElement as HTMLElement).style.transform = ''
+          d.style.boxShadow = '';
+          d.style.transform = '';
           this.props.onDraggingEnd();
         }
       }

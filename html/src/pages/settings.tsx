@@ -5,6 +5,7 @@ import settingsService from '../services/settings-service';
 import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
 import SettingsItemWowPath from '../components/settings-wow-path';
 import SettingsItemPasswordProvider from "../components/settings-password-provider";
+import SettingsItemAccounts from '../components/settings-accounts';
 
 type SettingsPageState = {
   settings?: any,
@@ -57,6 +58,8 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
         <SettingsItemPasswordProvider
           provider={this.state.settings?.dbSecretProvider === 'account-defined' ? 'left' : 'right'}
         />
+
+        <SettingsItemAccounts />
       </div>
     </div>
   }
