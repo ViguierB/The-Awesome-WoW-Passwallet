@@ -93,7 +93,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
             this.props.onIndexChange(+1);
           }
 
-          d.style.transform = `translate(0px, ${-(position.current.y - fitterY) + "px"})`
+          d.style.transform = `translateY(${-(position.current.y - fitterY) + "px"})`
         }
       }
       document.onmouseup = () => {
