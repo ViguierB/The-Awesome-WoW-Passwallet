@@ -60,8 +60,10 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
       };
       let initialIndex = this.props.index;
       let fitterY = 0;
-      document.onmousemove = (e3) => {
-        
+      let counter = 0;
+      document.onmousemove = () => {
+        if (++counter < 25) return;
+
         (d.parentElement as HTMLElement).style.zIndex = '1000';
         (d.parentElement as HTMLElement).style.pointerEvents = 'none';
         (d.parentElement as HTMLElement).style.transform = 'scale(1.05)';
