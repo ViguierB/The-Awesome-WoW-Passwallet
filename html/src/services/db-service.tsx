@@ -35,22 +35,32 @@ class DBService {
 
   public async addUser(name: string, email: string, password: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { name, email, password, command: 'add'})
+    return this._ipc.invoke('update-db', { name, email, password, command: 'add' })
   }
 
   public async updateUser(lastName: string, name: string, email: string, password: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { lastName, name, email, password, command: 'update'})
+    return this._ipc.invoke('update-db', { lastName, name, email, password, command: 'update' })
   }
 
   public async updateSorting(sortArray: {name: string, index: number}[]) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { sortArray, command: 'update-sorting'})
+    return this._ipc.invoke('update-db', { sortArray, command: 'update-sorting' })
   }
 
   public async removeUser(name: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { name, command: 'remove'})
+    return this._ipc.invoke('update-db', { name, command: 'remove' })
+  }
+
+  public async exportDB(path: string, password: string, ..._: any[]) {
+    if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
+    return this._ipc.invoke('export-db', { path, password });
+  }
+
+  public async importDB(path: string, password: string, merge: boolean) {
+    if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
+    return this._ipc.invoke('import-db', { path, password, merge });
   }
 
 }

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import settingsService from "../services/settings-service";
 import { ReactComponent as RightArrowIcon } from "../assets/right-arrow.svg";
 import _ from 'lodash';
 import Collapse from "./collapse";
 import './settings-wow-path.css'
+import miscService from "../services/misc-service";
 
 type SettingsItemWowPathProps = {
   onDataChange: (data: any) => void,
@@ -49,7 +49,7 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
   }
 
   private openFileDialog() {
-    settingsService.openFileDialog({
+    miscService.openFileDialog({
       properties: ['openFile'],
       filters: [
         { name : 'Software', extensions: ['exe'] },

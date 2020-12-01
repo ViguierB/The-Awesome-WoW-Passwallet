@@ -2,6 +2,8 @@ import React, { Component, CSSProperties } from "react";
 import { ReactComponent as ImportIcon } from "../assets/import.svg";
 import { ReactComponent as ExportIcon } from "../assets/export.svg";
 import './settings-accounts.css'
+import modalService from "../services/modal-service";
+import AccountModalImportExport from "./account-import-export-modal";
 
 type SettingsItemAccountsProps = {
  
@@ -37,10 +39,10 @@ export default class SettingsItemAccounts extends Component<SettingsItemAccounts
         <label> Accounts: </label>
         <footer>
           <div className='footer-button'
-            // onClick={modalService.closeModal.bind(modalService)}
+            onClick={() => modalService.openModal(<AccountModalImportExport action='import' />)}
           > <ImportIcon style={iconStyle} /> <div style={{margin: 'auto auto auto 0'}}> Import </div> </div> 
           <div className='footer-button'
-            // onClick={this.onDeleteClicked.bind(this)}
+            onClick={() => modalService.openModal(<AccountModalImportExport action='export' />)}
           > <ExportIcon style={iconStyle} /> <div style={{margin: 'auto auto auto 0'}}> Export</div> </div>
         </footer>
       </div>

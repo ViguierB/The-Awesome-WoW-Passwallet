@@ -6,6 +6,7 @@ import AttenuateEventTrigger from "../misc/attenuate_event_trigger";
 import SettingsItemWowPath from '../components/settings-wow-path';
 import SettingsItemPasswordProvider from "../components/settings-password-provider";
 import SettingsItemAccounts from '../components/settings-accounts';
+import miscService from "../services/misc-service";
 
 type SettingsPageState = {
   settings?: any,
@@ -32,7 +33,7 @@ export class SettingsPage extends Component<{}, SettingsPageState> {
   componentDidMount() {
     settingsService.settingUpdated.subcribe(this.refreshSettings.bind(this));
     settingsService.getSettings().then((settings: any) => this.setState({ settings }) );
-    settingsService.getPlatform().then((pltf: string) => {
+    miscService.getPlatform().then((pltf: string) => {
         this.setState({ platform: pltf });
     })
   }

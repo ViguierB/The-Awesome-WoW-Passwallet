@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { BrowserWindow } from 'electron';
+import { mergeDeep } from "./misc";
 
 const DBVERSION = 1;
 
@@ -78,7 +79,16 @@ export class DBHandle {
     }
   }
 
-  public applySort(sortArray: [{ name: string, index: number }]) {
+  public recalculateIndexs() {
+    const newSort = Object.keys(this._db)
+      .map(k => ({ name: k, index: this._db[k].index }))
+      .sort((a: any, b: any) => a.index - b.index)
+      .map((a, i) => ({ name: a.name, index: i }))
+
+    this.applySort(newSort);
+  }
+
+  public applySort(sortArray: { name: string, index: number }[]) {
     sortArray.forEach(item => {
       (this._db[item.name] || {}).index = item.index
     });
@@ -96,18 +106,29 @@ export class DBHandle {
     return Buffer.from(JSON.stringify(this._db));
   }
 
+  public merge(hToMergeIn: DBHandle) {
+    this._db = mergeDeep(this._db, hToMergeIn._db);
+    this.recalculateIndexs();
+  }
+
 }
 
 export default abstract class DBController {
 
   private   _algorithm = 'aes-256-cbc';
   protected _mainWin: BrowserWindow | null = null;
+  private   _unlockOptions = {
+    authorizeRetry: true
+  };
 
   protected abstract onGetSecretError(e: Error): Promise<{ retry: boolean }>;
   protected abstract getSecret(): Promise<string>;
   protected abstract getType(): string;
 
   public setMainWindow(win: BrowserWindow) { this._mainWin = win; }
+  public setOpenOptions(options: DBController['_unlockOptions']) {
+    this._unlockOptions = options
+  }
 
   private _fixDataBaseDataIfNeeded(dbOptions: ThenArg<ReturnType<DBController['_lock']>>, db: any) {
     try {
@@ -153,6 +174,10 @@ export default abstract class DBController {
 
       return d;
     } catch (e) {
+      if (!this._unlockOptions.authorizeRetry) {
+        throw e;
+      }
+
       const { retry } = await this.onGetSecretError(e);
       if (retry) {
         return await this._unlock(locked);
@@ -211,15 +236,20 @@ export default abstract class DBController {
           resolve(cdefault);
         }
 
-        const { t } = JSON.parse(buffer.toString());
+        try {
+          const { t } = JSON.parse(buffer.toString());
+          
+          controllers.some((v) => {
+            if (v.type === t) {
+              resolve(v.ctor);
+              return true;
+            }
+            return false;
+          })
+        } catch (e) {
+          reject(e);
+        }
 
-        controllers.some((v) => {
-          if (v.type === t) {
-            resolve(v.ctor);
-            return true;
-          }
-          return false;
-        })
       });
     });
   }

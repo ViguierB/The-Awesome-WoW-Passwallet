@@ -12,19 +12,6 @@ class SettingsService {
 
   public settingUpdated = new Emitter<void>();
 
-
-  // constructor() {
-
-  //   // this._ipc.on('on-settings-opened', (_e: any) => {
-  //   //   this.settingUpdated.emit();
-  //   // });
-
-  // }
-
-  getPlatform() {
-    return this._ipc.invoke('get-platform');
-  }
-
   updateSettings(data: { [key: string]: any } ) {
     return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
   }
@@ -39,21 +26,6 @@ class SettingsService {
 
   setProviderKeytar() {
     return this._ipc.invoke('set-provider-keytar');
-  }
-
-  openFileDialog(options: any = {}) {
-    return this._ipc.invoke('open-file-dialog', options).then((f: any) => {
-      if (f.canceled) {
-        return undefined;
-      } else if (f.filePaths.length > 1) {
-        return { files: f.filePaths }
-      } else {
-        return { file: f.filePaths[0] }
-      }
-    }) as Promise<{
-      files: Array<string> | undefined,
-      file: string | undefined
-    }>;
   }
 
 }
