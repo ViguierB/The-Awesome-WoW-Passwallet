@@ -1,9 +1,10 @@
 import { DB } from "./db";
-import { BrowserWindow, ipcMain, dialog, Notification } from "electron";
+import { BrowserWindow, ipcMain, dialog } from "electron";
 import * as fs from 'fs';
 import * as os from 'os';
 import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
 import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
+import { mergeDeep } from "./misc";
 
 function getDefaultPath() {
   return {
@@ -21,37 +22,11 @@ const defaultSettings = {
   dbSecretProvider: controllerKeytarType
 }
 
-function isObject(item: any) {
-  return (item && typeof item === 'object' && !Array.isArray(item));
-}
-
-function mergeDeep(target: any, ...sources: any[]): any {
-  if (!sources.length) return target;
-  const source = sources.shift();
-
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
-        mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
-      }
-    }
-  }
-
-  return mergeDeep(target, ...sources);
-}
-
 export class Settings {
 
   public settings: { [key: string]: any } = {};
 
   constructor(private _win: BrowserWindow, private _db: DB, private _filename: string) {
-
-    ipcMain.handle('open-file-dialog', async (_event, options) => {
-      return dialog.showOpenDialog(this._win, options);
-    });
 
     ipcMain.handle('get-platform', (_event, _options) => process.platform);
 

@@ -34,27 +34,6 @@ html, body, #root {
   flex-shrink: 0;
 }
 
-.gitlab-container {
-  width: calc(200px - 15px);
-  bottom: 15px;
-  position: absolute;
-  display: flex;
-  cursor: pointer;
-}
-
-.gitlab-text {
-  margin-top: auto;
-  margin-bottom: auto;
-  margin-left: auto;
-  margin-right: 10px;
-  font-size: smaller;
-}
-
-.gitlab-icon {
-  width: 23px;
-  filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, .7));
-}
-
 .pw-page {
   width: 100%;
   height: 100%;

@@ -7,6 +7,8 @@
 
 #accounts-container {
   margin: auto;
+  width: 100%;
+  max-width: 325px;
 }
 
 #home-page .button-add {

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import settingsService from "../services/settings-service";
 import { ReactComponent as RightArrowIcon } from "../assets/right-arrow.svg";
 import _ from 'lodash';
-import './settings-wow-path.css'
 import Collapse from "./collapse";
+import './settings-wow-path.css'
+import miscService from "../services/misc-service";
 
 type SettingsItemWowPathProps = {
   onDataChange: (data: any) => void,
@@ -49,7 +49,7 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
   }
 
   private openFileDialog() {
-    settingsService.openFileDialog({
+    miscService.openFileDialog({
       properties: ['openFile'],
       filters: [
         { name : 'Software', extensions: ['exe'] },
@@ -101,18 +101,17 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
             </table>
           </div>
         </Collapse>
-        <div style={{
+        <div className='button-collapse' style={{
           padding: "3px 5px",
           cursor: 'pointer',
           display: 'flex'
         }} onClick={() => { this.setState({ isCollapseHidden: !this.state.isCollapseHidden }) }} >
-          <RightArrowIcon style={{
-            margin: "auto",
+          <div className={this.state.isCollapseHidden ? 'hidden' : 'shown'} style={{ margin: "auto" }}><RightArrowIcon style={{
             transform: `rotate(${this.state.isCollapseHidden ? '90deg' : '-90deg'})`,
             transition: 'transform .3s ease',
             width: "16px",
             fill: "rgb(223, 223, 223)",
-          }}/>
+          }}/></div>
         </div>
       </div>
     );

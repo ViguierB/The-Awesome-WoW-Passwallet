@@ -23,9 +23,9 @@ export class ToastItem extends Component<ToastItemPropsInternal, {}> {
   private _forceClose= false;
   private _closeTimeoutHandle?: NodeJS.Timeout;
 
-  constructor(props: ToastItemPropsInternal) {
-    super(props);
-  }
+  // constructor(props: ToastItemPropsInternal) {
+  //   super(props);
+  // }
 
   componentDidMount() {
     this._itemRef.current?.addEventListener('mouseenter', () => {
@@ -93,10 +93,9 @@ export default class ToastContext extends Component {
   }
 
   public makeToast = (() => {
-    const toastFactory = React.createFactory(ToastItem);
     return (props: ToastItemProps) => {
       const key = gen.get();
-      return toastFactory({ ...props, key: key, lkey: key, _context: this});
+      return React.createElement(ToastItem, { ...props, key: key, lkey: key, _context: this});
     }
   })()
 

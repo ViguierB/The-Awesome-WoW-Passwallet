@@ -8,10 +8,9 @@ import './home.css';
 import modalService from '../services/modal-service';
 import AccountModal from '../components/account-modal';
 import dbService from '../services/db-service';
-import toastService from '../services/toast-service';
 
 type HomeState = {
-  accounts: ({ name: string, email: string } & { key: number })[],
+  accounts: ({ name: string, email: string, index: number } & { key: number })[],
   ready: boolean,
 }
 
@@ -21,18 +20,19 @@ export class Home extends Component<{}, HomeState> {
     super(props);
 
     this.state = { accounts: [], ready: false };
+  }
 
+  componentDidMount() {
     dbService.dbOpened.subcribe(this.onDbChange.bind(this));
     dbService.dbEdited.subcribe(this.onDbChange.bind(this));
-    this.onDbChange(null).then(() => {
+    this.onDbChange().then(() => {
       this.setState({ ready: true });
     });
   }
 
-  private onDbChange(_handle: any) {
-    return dbService.getDB().then(accounts => {
-      this.setState({ accounts: accounts.map(i => Object.assign(i, { key: gen.get() })) });
-    });
+  private async onDbChange() {
+    const accounts = await dbService.getDB();
+    this.setState({ accounts: accounts.map(i => Object.assign(i, { key: gen.get() })) });
   }
 
   onAddButtonClicked() {
@@ -46,7 +46,9 @@ export class Home extends Component<{}, HomeState> {
 
     return <div id="home-page">
       <div id='accounts-container'>
-        <AccountLaunchList items={ this.state.accounts } />
+        <AccountLaunchList items={ this.state.accounts } onSortingChange={(sorting) => {
+          dbService.updateSorting(sorting).then(() => {});
+        }} />
       </div>
       <div className='button-add' onClick={ this.onAddButtonClicked.bind(this) }>
         { (this.state.accounts.length === 0) ? (

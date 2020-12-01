@@ -2,37 +2,27 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  /* min-height: 100vh; */
+.gitlab-container {
+  width: calc(200px - 15px);
+  bottom: 15px;
+  position: absolute;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.gitlab-text {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: 10px;
+  font-size: smaller;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.gitlab-icon {
+  width: 23px;
+  filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, .7));
 }

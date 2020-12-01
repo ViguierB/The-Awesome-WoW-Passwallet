@@ -22,9 +22,9 @@ const dockItems = [
 
 class App extends Component<{}, {}> {
   
-  constructor(props: any) {
-    super(props);
-  }
+  // constructor(props: any) {
+  //   super(props);
+  // }
 
   render() {
     const app = (
@@ -32,13 +32,13 @@ class App extends Component<{}, {}> {
         <div className="pw-app">
           <div className="pw-dock-container">
             <Dock items={ dockItems }/>
-            <a className='gitlab-container' onClick={(e) => {
+            <button className='gitlab-container' onClick={(e) => {
               e.preventDefault();
               window.electron.shell.openExternal("https://gitlab.holidev.net/ben/the-awesome-wow-passwallet");
             }}>
               <div className='gitlab-text'> Source code </div>
               <GitlabIcon className='gitlab-icon' />
-            </a>
+            </button>
           </div>
           <div className="pw-page">
             <Switch>
