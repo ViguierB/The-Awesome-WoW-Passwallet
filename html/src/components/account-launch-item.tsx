@@ -27,6 +27,7 @@ type AccountLaunchListState = {
 export default class AccountLaunchItem extends Component<AccountLaunchItemProps, AccountLaunchListState> {
 
   private _dragElem = React.createRef<HTMLDivElement>();
+  private _onIndexDidUpdate = () => {};
 
   constructor(props: AccountLaunchItemProps) {
     super(props);
@@ -60,17 +61,26 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
       };
       let initialIndex = this.props.index;
       let fitterY = 0;
-      let counter = 0;
-      document.onmousemove = () => {
-        // if (++counter < 25) return;
 
+      //add 'lag' for the dragging
+      let timeoutId = setTimeout(() => {
         (d.parentElement as HTMLElement).style.zIndex = '1000';
         (d.parentElement as HTMLElement).style.pointerEvents = 'none';
         (d.parentElement as HTMLElement).style.transform = 'scale(1.05)';
         d.style.boxShadow = '0px 5px 7px rgba(0, 0, 0, .4)'
         this.props.onDraggingStart();
         dragging = true;
+        const sp = window.getComputedStyle(d.parentElement as HTMLElement);
+        const h = (
+          parseInt(sp.getPropertyValue('height'))
+          + parseInt(sp.getPropertyValue('margin-bottom'))
+          + parseInt(sp.getPropertyValue('margin-top'))
+        );
 
+        const updateTransform = this._onIndexDidUpdate = () => {
+          fitterY = h * (initialIndex - this.props.index);
+          d.style.transform = `translateY(${-(position.current.y - fitterY) + "px"})`
+        }
         document.onmousemove = (e2) => {
           e2 = e2 || window.event;
           e2.preventDefault();
@@ -81,28 +91,19 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
             },
             initial: position.initial
           };
-          const sp = window.getComputedStyle(d.parentElement as HTMLElement);
-          const h = (
-            parseInt(sp.getPropertyValue('height'))
-            + parseInt(sp.getPropertyValue('margin-bottom'))
-            + parseInt(sp.getPropertyValue('margin-top'))
-          );
-          fitterY = h * (initialIndex - this.props.index);
+          updateTransform();
           if (position.current.y - fitterY > h * .666) {
             this.props.onIndexChange(-1);
           }
           if (position.current.y - fitterY < -h * .666) {
             this.props.onIndexChange(+1);
           }
-
-          d.style.transform = `translateY(${-(position.current.y - fitterY) + "px"})`
         }
-      }
-      document.onmouseup = () => {
-        document.onmouseup = null;
-        document.onmousemove = null;
-        if (dragging) {
+        document.onmouseup = () => {
+          document.onmouseup = null;
+          document.onmousemove = null;
           dragging = false;
+          this._onIndexDidUpdate = () => {};
           (d.parentElement as HTMLElement).style.zIndex = '0';
           (d.parentElement as HTMLElement).style.pointerEvents = '';
           (d.parentElement as HTMLElement).style.transform = ''
@@ -110,6 +111,12 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           d.style.transform = '';
           this.props.onDraggingEnd();
         }
+      }, 250);
+
+      //abort dragging
+      document.onmouseup = () => {
+        clearTimeout(timeoutId);
+        document.onmouseup = null;
       }
     }
   }
@@ -143,6 +150,9 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
   componentDidUpdate(prevProps: AccountLaunchItemProps) {
     if (prevProps.isDragging !== this.props.isDragging) {
       this.forceUpdate();
+    }
+    if (prevProps.index !== this.props.index) {
+      this._onIndexDidUpdate();
     }
   }
 
