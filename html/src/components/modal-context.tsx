@@ -37,8 +37,11 @@ export default class ModalContext extends Component {
 
     setTimeout(() => {
       if (!!this._contentRef.current) {
-        this._contentRef.current.onmousedown = e => {
+        this._contentRef.current.onmousedown = this._contentRef.current.onmouseup = e => {
           e.stopPropagation();
+          if (!!c) {
+            c.onmouseup = null;
+          }
         }
       }
     });
