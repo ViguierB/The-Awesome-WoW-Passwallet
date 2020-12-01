@@ -59,3 +59,14 @@ kill $frontpid;
 
 npm run build-all && npm start;
 ```
+
+## Create Release
+
+```bash
+## build front
+( cd html && npm run build -- --prod )
+
+npm run build-all && npm run dist;
+```
+
+Release packages can be found in the 'release' folder.
