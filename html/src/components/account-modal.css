@@ -5,7 +5,7 @@
 
 #modal-account header {
   display: flex;
-  padding-bottom: 25px;
+  padding-bottom: 10px;
 }
 
 #modal-account header .modal-close {
@@ -22,6 +22,14 @@
 #modal-account header .modal-title, #modal-account header .modal-close {
   margin-top: auto;
   margin-bottom: auto;
+}
+
+/* #modal-account header .modal-close {
+  transition: filter .3s
+} */
+
+#modal-account header .modal-close:hover {
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, .7));
 }
 
 #modal-account header .modal-close .icon {
@@ -56,6 +64,10 @@
   display: flex;
 }
 
+#modal-account footer .footer-button:hover {
+  filter: brightness(1.20);
+}
+
 #modal-account footer .footer-button {
   display: block;
   border: none;
@@ -68,6 +80,7 @@
   color: rgb(223, 223, 223);
   width: 100%;
   padding: 10px 0;
+  transition: filter 0.3s ease;
 }
 
 #modal-account footer div {

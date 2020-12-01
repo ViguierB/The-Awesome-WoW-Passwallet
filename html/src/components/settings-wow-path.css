@@ -1,0 +1,38 @@
+.wow-path > * {
+  /* margin: 10px 0; */
+}
+
+.wow-path input[type="file"] {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+}
+
+@keyframes button-collapse-anim {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px) scale(1.2, .8);
+  }
+}
+
+@keyframes button-collapse-anim-reverse {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10px) scale(1.2, .8);
+  }
+}
+
+.wow-path .button-collapse:hover .hidden {
+  animation: button-collapse-anim ease-in-out infinite alternate .7s;
+}
+
+.wow-path .button-collapse:hover .shown {
+  animation: button-collapse-anim-reverse ease-in-out infinite alternate .7s;
+}

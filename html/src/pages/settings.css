@@ -1,0 +1,49 @@
+#settings-page {
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  display: flex;
+  overflow: auto;
+  padding: 10px;
+}
+
+#settings-page #main-container {
+  margin: auto;
+  width: 100%;
+  max-width: 500px;
+}
+
+#settings-page .settings-field {
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  margin: 10px 0;
+  border-radius: 5px;
+  background-color: rgba(0, 0 ,0, .2);
+}
+
+#settings-page .settings-field label {
+  margin: 0 5px;
+}
+
+#settings-page .settings-field input {
+  width: 100%;
+  margin-right: 10px !important;
+}
+
+#settings-page .settings-field input, #settings-page .settings-field div label {
+  border: none; 
+  outline: none;
+  border-radius: 4px;
+  font-size: initial;
+  padding: 10px 20px;
+  color: rgb(223, 223, 223);
+  background-color: #2f2f2f;
+  border-radius: 4px;
+  font-size: initial;
+  margin: 10px 0;
+}
+
+#settings-page .settings-field div label {
+  margin: 10px 0;
+  cursor: pointer;
+}

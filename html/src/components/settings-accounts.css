@@ -1,0 +1,29 @@
+#settings-page .accounts {
+  overflow: hidden;
+}
+
+#settings-page .accounts footer {
+  transform: translateX(-10px) translateY(10px);
+  width: calc(100% + 20px);
+  display: flex;
+}
+
+#settings-page .accounts footer .footer-button:hover {
+  background-color: #5c6ad2;
+}
+
+#settings-page .accounts footer .footer-button {
+  display: flex;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 0;
+  font-size: initial;
+  color: rgb(223, 223, 223);
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}

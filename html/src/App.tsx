@@ -1,31 +1,64 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import Dock from './components/dock';
 import { Home } from './pages/home';
-import homeIcon from './assets/logo-passwallet.svg';
-import settingsIcon from './assets/settings.svg';
+import { ReactComponent as HomeIcon } from './assets/logo-passwallet.svg';
+import { ReactComponent as SettingsIcon } from './assets/settings.svg';
+import { ReactComponent as GitlabIcon } from './assets/logo-gitlab.svg';
 import gen from './misc/very-simple-key-generator';
 import ModalContext from './components/modal-context';
+import ToastContext from './components/toast-context';
+import { SettingsPage } from './pages/settings';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from "react-router-dom";
 
 const dockItems = [
-  { text: 'Home', icon: homeIcon },
-  { text: 'Settings', icon: settingsIcon }
+  { text: 'Home', icon: <HomeIcon />, path: '/', default: true },
+  { text: 'Settings', icon: <SettingsIcon />, path: '/settings'}
 ].map(i => Object.assign(i, { key: gen.get() }));
 
-function App() {
+class App extends Component<{}, {}> {
+  
+  // constructor(props: any) {
+  //   super(props);
+  // }
 
-  return (
-    <div className="pw-app">
-      <div className="pw-dock-container">
-        <Dock items={ dockItems }/>
-      </div>
-      <div className="pw-home">
-        <Home />
-      </div>
+  render() {
+    const app = (
+      <Router basename="/">
+        <div className="pw-app">
+          <div className="pw-dock-container">
+            <Dock items={ dockItems }/>
+            <button className='gitlab-container' onClick={(e) => {
+              e.preventDefault();
+              window.electron.shell.openExternal("https://gitlab.holidev.net/ben/the-awesome-wow-passwallet");
+            }}>
+              <div className='gitlab-text'> Source code </div>
+              <GitlabIcon className='gitlab-icon' />
+            </button>
+          </div>
+          <div className="pw-page">
+            <Switch>
+              <Route path="/settings">
+                <SettingsPage />
+              </Route>
+              <Route exact path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </div>
+  
+          <ModalContext />
+          <ToastContext />
+        </div>
+      </Router>
+    );
 
-      <ModalContext />
-    </div>
-  );
+    return app;
+  }
 }
 
 export default App;

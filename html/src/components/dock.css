@@ -4,9 +4,31 @@ ul.pw-dock {
 }
 
 .pw-dock li {
+  position: relative;
   list-style-type: none;
   display: flex;
   transition: background-color .3s ease;
+}
+
+.pw-dock .selection {
+  position: absolute;
+  width: 8px;
+  height: 0;
+  left: -4px;
+  top: 50%;
+  background-color: rgb(223, 223, 223);
+  transition: ease .2s;
+  border-radius: 99px;
+}
+
+.pw-dock li:hover .selection {
+  height: 20%;
+  top: 40%;
+}
+
+.pw-dock .selected .selection {
+  height: 60% !important;
+  top: 20% !important;
 }
 
 .pw-dock li:hover {
@@ -15,17 +37,19 @@ ul.pw-dock {
 
 .pw-dock li .icon-container {
   border-radius: 50%;
-  height: 65px;
-  width: 65px;
-  margin: 10px 5px;
+  height: 45px;
+  width: 45px;
+  margin: 10px 9px;
   display: flex;
   background-color: #272525;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  border: solid 2px rgb(223, 223, 223);
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.45);
   flex-shrink: 0;
 }
 
-.pw-dock li .icon-container img {
-  width: 40px;
+.pw-dock li .icon-container svg {
+  width: 65%;
+  height: 65%;
   margin: auto;
 }
 
@@ -36,6 +60,6 @@ ul.pw-dock {
 
 .pw-dock li .text-container span {
   text-transform: uppercase;
-  color: beige;
-  cursor: auto;
+  color: rgb(223, 223, 223);
+  cursor: pointer;
 }
