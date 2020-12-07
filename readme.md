@@ -1,5 +1,9 @@
 # THE AWESOME WOW PASSWALLET
 
+### A simple launcher for World of Warcraft
+
+![alt text][screen1]
+
 ## How to build
 
 ### Install build env
@@ -69,4 +73,14 @@ npm run build-all && npm start;
 npm run build-all && npm run dist;
 ```
 
-Release packages can be found in the 'release' folder.
+Release packages can be found in the 'release' folder:
+
+```bash
+ls release
+  ## >> output
+  ...
+  'the awesome wow passwallet Setup 1.0.0.exe'
+  ...
+```
+
+[screen1]: https://gitlab.holidev.net/ben/the-awesome-wow-passwallet/-/raw/docs/images/Screenshot1.png?inline=false "Screenshot 1"
