@@ -5,14 +5,33 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Node",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "args": [ "./dist/main.js" ],
+      "env": { "IS_DEV": "true" },
+      "outputCapture": "std"
+    },
+    {
       "name": "(gdb) Launch",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/electron/dist/electron",
-      "args": [ "./dist/main.js" ],
+      "program": "${workspaceFolder}/release/linux-unpacked/the-awesome-wow-passwallet",
+      "windows": {
+        "program": "${workspaceFolder}/release/win-unpacked/the awesome wow passwallet.exe"
+      },
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [{ "name": "IS_DEV", "value": "true" }],
+      "cwd": "${workspaceFolder}/release/win-unpacked/",
+      "environment": [
+        {"name": "ELECTRON_ENABLE_LOGGING", "value": "true"},
+        {"name": "ELECTRON_ENABLE_STACK_DUMPING", "value": "true"},
+        {"name": "ELECTRON_RUN_AS_NODE", "value": ""},
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
@@ -21,7 +40,10 @@
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         },
-      ]
+      ],
+      "sourceFileMap": {
+        "o:\\": "${workspaceFolder}",
+      }
     }
   ]
 }
