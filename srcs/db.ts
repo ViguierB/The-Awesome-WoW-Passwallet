@@ -14,6 +14,7 @@ export class DB {
 
   public changeController(ctor: typeof DBController | any) {
     this._db = new ctor();
+    this._db.setMainWindow(this._win);
   }
 
   public getController() { return this._db; }

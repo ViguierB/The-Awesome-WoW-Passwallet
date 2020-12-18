@@ -69,7 +69,6 @@ function createWindow () {
       fs.unlinkSync(dbFilePath);
       return db.open();
     }).then(() => {
-      db.getController().setMainWindow(win);
       win.once('ready-to-show', () => {
         win.show()
       });
