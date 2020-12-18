@@ -43,8 +43,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
       console.error('Item not created, it cannot set as draggable')
       return;
     }
-    
-    let dragging = false;
+
     let position = {
       initial: { x: 0, y: 0 },
       current: { x: 0, y: 0 }
@@ -69,7 +68,6 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
         (d.parentElement as HTMLElement).style.transform = 'scale(1.05)';
         d.style.boxShadow = '0px 5px 7px rgba(0, 0, 0, .4)'
         this.props.onDraggingStart();
-        dragging = true;
         const sp = window.getComputedStyle(d.parentElement as HTMLElement);
         const h = (
           parseInt(sp.getPropertyValue('height'))
@@ -102,7 +100,6 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
         document.onmouseup = () => {
           document.onmouseup = null;
           document.onmousemove = null;
-          dragging = false;
           this._onIndexDidUpdate = () => {};
           (d.parentElement as HTMLElement).style.zIndex = '0';
           (d.parentElement as HTMLElement).style.pointerEvents = '';

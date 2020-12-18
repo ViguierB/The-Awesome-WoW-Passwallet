@@ -18,7 +18,7 @@ class ModalService {
     const hsubject = { id: gen.get(), component: subject };
     
     return (
-      new Promise(resolve => {
+      new Promise<void>(resolve => {
         if (this._ready) {
           resolve();
         } else {
