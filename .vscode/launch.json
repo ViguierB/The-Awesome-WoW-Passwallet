@@ -5,7 +5,25 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Node",
+      "name": "(gdb) Attach",
+      "type": "cppdbg",
+      "request": "attach",
+      "program": "${workspaceFolder}/release/linux-unpacked/the-awesome-wow-passwallet",
+      "windows": {
+        "program": "${workspaceFolder}/release/win-unpacked/the awesome wow passwallet.exe"
+      },
+      "processId": "${command:pickProcess}",
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          }
+      ]
+    },
+    {
+      "name": "(Node) Launch",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -14,7 +32,12 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
       },
       "args": [ "./dist/main.js" ],
-      "env": { "IS_DEV": "true" },
+      "env": {
+        "IS_DEV": "true",
+        "ELECTRON_ENABLE_LOGGING": "true",
+        "ELECTRON_ENABLE_STACK_DUMPING": "true",
+        "ELECTRON_RUN_AS_NODE": ""
+      },
       "outputCapture": "std"
     },
     {

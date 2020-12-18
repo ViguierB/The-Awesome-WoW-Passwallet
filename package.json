@@ -1,6 +1,6 @@
 {
   "name": "the-awesome-wow-passwallet",
-  "version": "1.0.0",
+  "version": "1.0.0a",
   "description": "A World of Warcraft Classic passwallet",
   "main": "dist/main.js",
   "homepage": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet",
@@ -23,7 +23,8 @@
     "build-all-dev": "npm run build-native-dev && npm run build",
     "build-front": "bash -c 'cd html; bash -c \"npm run build\"'",
     "start-dev": "run-script-os",
-    "start-dev:linux:darwin": "env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 --gdb ./dist/main.js",
+    "start-dev:linux": "env IS_DEV=true \"ELECTRON_ENABLE_LOGGING\"=\"true\" \"ELECTRON_ENABLE_STACK_DUMPING\"=\"true\" \"ELECTRON_RUN_AS_NODE\"=\"\" ./node_modules/electron/dist/electron --inspect=5858 --gdb ./dist/main.js",
+    "start-dev:darwin": "env IS_DEV=true ./node_modules/electron/dist/Electron.app/Contents/MacOS/Electron --inspect=5858 --gdb ./dist/main.js",
     "start-dev:win32": "bash -c 'env IS_DEV=true ./node_modules/electron/dist/electron --inspect=5858 ./dist/main.js'",
     "start": "electron ./dist/main.js",
     "dist": "electron-builder build",
