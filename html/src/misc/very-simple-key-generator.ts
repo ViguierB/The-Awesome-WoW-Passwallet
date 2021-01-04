@@ -4,4 +4,6 @@ export class KeyGenerator {
   public get() { return ++this.__lastid; }
 };
 
-export default new KeyGenerator();
+const gen = new KeyGenerator();
+
+export default gen;

@@ -68,3 +68,12 @@
   margin: auto;
   fill: rgb(223, 223, 223);
 }
+
+#home-page .awp-drop-down-menu {
+  position: absolute;
+  float: right;
+  right: 15px;
+  top: 15px;
+  text-transform: uppercase;
+  z-index: 10000;
+}
