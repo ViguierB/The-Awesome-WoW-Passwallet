@@ -49,7 +49,7 @@ export class Executor {
         }
         throw new Error('Window handler not found');
       })();
-      await pTimeout(1800);
+      await pTimeout(nativeExecutor.getWaitingTime());
       nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);

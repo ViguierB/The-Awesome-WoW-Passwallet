@@ -42,6 +42,7 @@ void T::Init(Napi::Env& env, Napi::Object& exports) { \
       T::InstanceMethod("setWowEnv", &T::setWowEnv), \
       T::InstanceMethod("setWowArgs", &T::setWowArgs), \
       T::InstanceMethod("setWowName", &T::setWowName), \
+      T::InstanceMethod("getWaitingTime", &T::getWaitingTime), \
     }); \
     /* Create a peristent reference to the class constructor. This will allow */ \
     /* a function called on a class prototype and a function */ \

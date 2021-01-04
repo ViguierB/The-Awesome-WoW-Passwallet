@@ -49,13 +49,18 @@ private:
   Napi::Value isWoWReady(const Napi::CallbackInfo &info);
   Napi::Value spawnWow(const Napi::CallbackInfo &info);
   Napi::Value writeCredentials(const Napi::CallbackInfo &info);
+  Napi::Value getWaitingTime(const Napi::CallbackInfo &info);
 };  
 
 Napi::FunctionReference NativeExecutorForWindows::constructor;
 
 DECLARE_INIT_FUNCTION(NativeExecutorForWindows);
 
-Napi::Value NativeExecutorForWindows::isWoWReady(const Napi::CallbackInfo &info){
+Napi::Value NativeExecutorForWindows::getWaitingTime(const Napi::CallbackInfo &info) {
+  return Napi::Number::New(info.Env(), 250);
+}
+
+Napi::Value NativeExecutorForWindows::isWoWReady(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   auto res = WaitForInputIdle(this->_pNativeHandle, 100);
