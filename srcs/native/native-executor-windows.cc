@@ -12,11 +12,11 @@ public:
   NativeExecutorForWindows(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForWindows>(info) {
-    std::cout << "NativeExecutorForWindows()" << std::endl;
+    // std::cout << "NativeExecutorForWindows()" << std::endl;
   }
 
   ~NativeExecutorForWindows() {
-    std::cout << "~NativeExecutorForWindows()" << std::endl;
+    // std::cout << "~NativeExecutorForWindows()" << std::endl;
   }
 
 private:

@@ -13,12 +13,12 @@ public:
   NativeExecutorForLinux(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForLinux>(info) {
-    std::cout << __FUNCTION__ << std::endl;
+    // std::cout << __FUNCTION__ << std::endl;
   }
 
   ~NativeExecutorForLinux() {
     XCloseDisplay(_display);
-    std::cout << __FUNCTION__ << std::endl;
+    // std::cout << __FUNCTION__ << std::endl;
   }
 
 private:
