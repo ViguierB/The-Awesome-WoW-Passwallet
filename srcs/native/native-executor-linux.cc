@@ -13,12 +13,12 @@ public:
   NativeExecutorForLinux(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForLinux>(info) {
-    std::cout << __FUNCTION__ << std::endl;
+    // std::cout << __FUNCTION__ << std::endl;
   }
 
   ~NativeExecutorForLinux() {
     XCloseDisplay(_display);
-    std::cout << __FUNCTION__ << std::endl;
+    // std::cout << __FUNCTION__ << std::endl;
   }
 
 private:
@@ -30,6 +30,7 @@ private:
   Napi::Value isWoWReady(const Napi::CallbackInfo &info);
   Napi::Value spawnWow(const Napi::CallbackInfo &info);
   Napi::Value writeCredentials(const Napi::CallbackInfo &info);
+  Napi::Value getWaitingTime(const Napi::CallbackInfo &info);
 };  
 
 Napi::FunctionReference NativeExecutorForLinux::constructor;
@@ -46,6 +47,10 @@ Napi::Value NativeExecutorForLinux::isWoWReady(const Napi::CallbackInfo &info){
     return Napi::Boolean::New(env, true);
   }
   return Napi::Boolean::New(env, false);
+}
+
+Napi::Value NativeExecutorForLinux::getWaitingTime(const Napi::CallbackInfo &info) {
+  return Napi::Number::New(info.Env(), 2000);
 }
 
 Napi::Value NativeExecutorForLinux::spawnWow(const Napi::CallbackInfo &info){

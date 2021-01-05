@@ -12,7 +12,7 @@ import Misc from './misc';
 const isDev = process.env.IS_DEV === 'true';
 
 function getFullFileName(base: string) {
-  if (!isDev && process.platform === 'linux') {
+  if (!isDev) {
     const basePath = path.join(app.getPath('appData'), 'the-awesome-wow-passwallet');
     if (!fs.existsSync(basePath)) {
       fs.mkdirSync('basePath');

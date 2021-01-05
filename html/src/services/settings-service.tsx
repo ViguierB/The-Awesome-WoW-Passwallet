@@ -12,8 +12,8 @@ class SettingsService {
 
   public settingUpdated = new Emitter<void>();
 
-  updateSettings(data: { [key: string]: any } ) {
-    return this._ipc.invoke('update-settings', data).then(() => this.settingUpdated.emit());
+  updateSettings(data: { [key: string]: any }, notif = true ) {
+    return this._ipc.invoke('update-settings', { data, notif }).then(() => this.settingUpdated.emit());
   }
 
   getSettings() {

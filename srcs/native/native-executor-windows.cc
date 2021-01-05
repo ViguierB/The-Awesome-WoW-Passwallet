@@ -12,34 +12,74 @@ public:
   NativeExecutorForWindows(const Napi::CallbackInfo &info):
   NativeExecutorCommon(info),
   Napi::ObjectWrap<NativeExecutorForWindows>(info) {
-    std::cout << "NativeExecutorForWindows()" << std::endl;
+    // std::cout << "NativeExecutorForWindows()" << std::endl;
   }
 
   ~NativeExecutorForWindows() {
-    std::cout << "~NativeExecutorForWindows()" << std::endl;
+    // std::cout << "~NativeExecutorForWindows()" << std::endl;
   }
 
 private:
-  HANDLE _pNativeHandle;
+  HANDLE  _pNativeHandle;
+  HWND    _pMainWin;
+
+  struct handleData {
+    unsigned long processId;
+    HWND          windowHandle;
+  };
+
+  static BOOL isMainWindow(HWND handle) {
+    return ::GetWindow(handle, GW_OWNER) == (HWND)0 && ::IsWindowVisible(handle);
+  }
+
+  static BOOL CALLBACK enumWindowsCallback(HWND handle, LPARAM lParam) {
+    auto&         data = *(handleData*)lParam;
+    unsigned long processId = 0;
+
+    ::GetWindowThreadProcessId(handle, &processId);
+    if (data.processId != processId || !NativeExecutorForWindows::isMainWindow(handle)) {
+      return TRUE;
+    }
+    data.windowHandle = handle;
+    return FALSE;   
+  }
 
   static Napi::FunctionReference constructor;
   Napi::Value waitForWoWReady(const Napi::CallbackInfo &info);
   Napi::Value isWoWReady(const Napi::CallbackInfo &info);
   Napi::Value spawnWow(const Napi::CallbackInfo &info);
   Napi::Value writeCredentials(const Napi::CallbackInfo &info);
+  Napi::Value getWaitingTime(const Napi::CallbackInfo &info);
 };  
 
 Napi::FunctionReference NativeExecutorForWindows::constructor;
 
 DECLARE_INIT_FUNCTION(NativeExecutorForWindows);
 
-Napi::Value NativeExecutorForWindows::isWoWReady(const Napi::CallbackInfo &info){
+Napi::Value NativeExecutorForWindows::getWaitingTime(const Napi::CallbackInfo &info) {
+  return Napi::Number::New(info.Env(), 250);
+}
+
+Napi::Value NativeExecutorForWindows::isWoWReady(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   auto res = WaitForInputIdle(this->_pNativeHandle, 100);
 
   switch (res) {
-    case 0: return Napi::Boolean::New(env, true);
+    case 0: {
+      handleData  data;
+
+      data.processId = this->_wowProc->getPid();
+      data.windowHandle = 0;
+      ::EnumWindows(&NativeExecutorForWindows::enumWindowsCallback, (LPARAM)&data);
+
+      if (data.windowHandle == 0) {
+        return Napi::Boolean::New(env, false);
+      }
+
+      this->_pMainWin = data.windowHandle;
+      return Napi::Boolean::New(env, true);
+    }
     case WAIT_TIMEOUT: return Napi::Boolean::New(env, false);
     case WAIT_FAILED: {
       Napi::Error::New(env, "Error: WaitForInputIdle()").ThrowAsJavaScriptException();
@@ -85,7 +125,7 @@ Napi::Value NativeExecutorForWindows::writeCredentials(const Napi::CallbackInfo 
   Napi::Env   env = info.Env();
   
   try {
-    pw::FakeKeyboardWindows fk(this->_wowProc->getPid());
+    pw::FakeKeyboardWindows fk(this->_wowProc->getPid(), this->_pMainWin);
 
     fk.text(this->_account.email);
     fk.sendTab();

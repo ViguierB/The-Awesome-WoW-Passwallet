@@ -50,11 +50,11 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
 
   private openFileDialog() {
     miscService.openFileDialog({
-      properties: ['openFile'],
-      filters: [
-        { name : 'Software', extensions: ['exe'] },
-        { name: 'All', extensions: ['*'] }
-      ]
+      properties: ['openDirectory'],
+      // filters: [
+      //   { name : 'Software', extensions: ['exe'] },
+      //   { name: 'All', extensions: ['*'] }
+      // ]
     }).then(f => {
       if (!f) { return; }
       const platform = this.props.platform || "hummm";
@@ -66,7 +66,7 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
   render() {
     return (
       <div className="settings-field wow-path">
-        <label htmlFor="input-path"> World of Warcraft binary path: </label>
+        <label htmlFor="input-path"> World of Warcraft path: </label>
         <div style={{ display: 'flex', }}>
           <input id="input-path" value={ this.state.wow[this.props.platform || ""]?.path || "" }
             onChange={ this.onChange.bind(this, 'path') }
@@ -106,12 +106,14 @@ export default class SettingsItemWowPath extends Component<SettingsItemWowPathPr
           cursor: 'pointer',
           display: 'flex'
         }} onClick={() => { this.setState({ isCollapseHidden: !this.state.isCollapseHidden }) }} >
-          <div className={this.state.isCollapseHidden ? 'hidden' : 'shown'} style={{ margin: "auto" }}><RightArrowIcon style={{
-            transform: `rotate(${this.state.isCollapseHidden ? '90deg' : '-90deg'})`,
-            transition: 'transform .3s ease',
-            width: "16px",
-            fill: "rgb(223, 223, 223)",
-          }}/></div>
+          <div className={this.state.isCollapseHidden ? 'hidden' : 'shown'} style={{ margin: "auto" }}>
+            <RightArrowIcon style={{
+              transform: `rotateZ(-90deg) rotateY(${(this.state.isCollapseHidden) ? 180 : 0}deg)`,
+              transition: 'transform .3s ease',
+              width: "16px",
+              fill: "rgb(223, 223, 223)",
+            }}/>
+          </div>
         </div>
       </div>
     );

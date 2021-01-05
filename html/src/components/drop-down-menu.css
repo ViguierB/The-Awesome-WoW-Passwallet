@@ -1,0 +1,52 @@
+.awp-drop-down-menu {
+  background-color: #333333;
+  border-radius: 5px;
+  padding: 8px 15px;
+  display: flex;
+  min-width: 120px;
+  color: rgb(223, 223, 223);
+  cursor: pointer;
+  transition:  border-radius .5s;
+}
+
+.awp-drop-down-menu svg {
+  margin-right: 15px;
+}
+
+.awp-drop-down-menu-children {
+  background-color: #242424;
+  border-radius: 0 0 5px 5px;
+  position: fixed;
+  opacity: 0;
+  transform: translate(-15px, 0px);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.awp-drop-down-menu-value {
+  margin-left: auto;
+}
+
+.awp-drop-down-item {
+  text-align: end;
+  padding: 8px 15px;
+}
+
+@media (max-width: 1200px) {
+  .awp-drop-down-menu {
+    font-size: smaller;
+    min-width: 90px;
+  }
+}
+
+.awp-drop-down-item:not(.disabled):hover {
+  background-color: #1a1a1a;
+}
+
+.awp-drop-down-item.disabled {
+  /* color: rgb(112, 112, 112);
+  font-style: italic;
+  cursor: default; */
+  display: none;
+}

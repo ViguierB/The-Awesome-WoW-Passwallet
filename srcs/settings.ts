@@ -9,16 +9,17 @@ import { mergeDeep } from "./misc";
 function getDefaultPath() {
   return {
     "linux": {
-      path: `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft/_classic_/WowClassic.exe`,
+      path: `${os.userInfo().homedir}/.wine/c/Program Files (x86)/World of Warcraft`,
     },
     "win32": {
-      path: "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\WowClassic.exe"
+      path: "C:\\Program Files (x86)\\World of Warcraft"
     }
   }
 }
 
 const defaultSettings = {
   wow: getDefaultPath(),
+  selectedExtension: 'retail',
   dbSecretProvider: controllerKeytarType
 }
 
@@ -53,13 +54,15 @@ export class Settings {
       });
     });
 
-    ipcMain.handle('update-settings', async (_event, data) => {
+    ipcMain.handle('update-settings', async (_event, { data, notif = true }) => {
       this.settings = mergeDeep(this.settings, data);
       await this.save();
-      this._win.webContents.send('show-toast', {
-        title: 'Settings',
-        message: 'Settings have been updated!'
-      });
+      if (notif) {
+        this._win.webContents.send('show-toast', {
+          title: 'Settings',
+          message: 'Settings have been updated!'
+        });
+      }
       return;
     });
 
@@ -106,6 +109,8 @@ export class Settings {
             })
             delete this.settings.wowPath;
           }
+
+          this.settings = mergeDeep(defaultSettings, this.settings)
 
         } catch (e) {
           reject(e);

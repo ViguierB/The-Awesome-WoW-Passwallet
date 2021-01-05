@@ -6,8 +6,10 @@ import { ReactComponent as AddIcon } from "../assets/add.svg";
 import { ReactComponent as RightArrowIcon } from "../assets/right-arrow.svg";
 import './home.css';
 import modalService from '../services/modal-service';
+import settingsService from '../services/settings-service';
 import AccountModal from '../components/account-modal';
 import dbService from '../services/db-service';
+import DropDownMenu, { DropDownMenuItem } from '../components/drop-down-menu';
 
 type HomeState = {
   accounts: ({ name: string, email: string, index: number } & { key: number })[],
@@ -15,6 +17,8 @@ type HomeState = {
 }
 
 export class Home extends Component<{}, HomeState> {
+
+  private _menuInitialValue: string = '';
 
   constructor(props: any) {
     super(props);
@@ -25,7 +29,14 @@ export class Home extends Component<{}, HomeState> {
   componentDidMount() {
     dbService.dbOpened.subcribe(this.onDbChange.bind(this));
     dbService.dbEdited.subcribe(this.onDbChange.bind(this));
-    this.onDbChange().then(() => {
+    
+    Promise.all([
+      this.onDbChange(),
+      settingsService.getSettings().then((s: any) => {
+        this._menuInitialValue = s['selectedExtension'];
+        return s;
+      })
+    ]).then(() => {
       this.setState({ ready: true });
     });
   }
@@ -60,6 +71,16 @@ export class Home extends Component<{}, HomeState> {
         }
         <AddIcon className='icon' />
       </div>
+      <DropDownMenu initialValue={this._menuInitialValue} onValueChange={(v) => {
+        settingsService.updateSettings({ selectedExtension: v }, false);
+      }}>
+        <DropDownMenuItem value="retail">
+          Retail
+        </DropDownMenuItem>
+        <DropDownMenuItem value="classic">
+          Classic
+        </DropDownMenuItem>
+      </DropDownMenu>
     </div>
   }
 

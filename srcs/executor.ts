@@ -13,11 +13,24 @@ export class Executor {
     private _dbHandle: DBHandle
   ) {}
 
+  private _getFullPath() {
+    const pathSuffixs = {
+      'retail': [ '_retail_', 'Wow.exe' ],
+      'classic': [ '_classic_', 'WowClassic.exe' ]
+    };
+    const suffix = pathSuffixs[this._settings.settings['selectedExtension'] as 'retail' | 'classic'];
+
+    return path.join(
+      this._settings.settings.wow[process.platform].path,
+      ...suffix
+    );
+  }
+
   public async start(username: string) {
     const nativeExecutor = new NativeExecutor()
     nativeExecutor.setAccount(this._dbHandle.getAccount(username));
-    nativeExecutor.setWorkDir(path.dirname(this._settings.settings.wow[process.platform].path));
-    nativeExecutor.setWowName(path.basename(this._settings.settings.wow[process.platform].path));
+    nativeExecutor.setWorkDir(path.dirname(this._getFullPath()));
+    nativeExecutor.setWowName(path.basename(this._getFullPath()));
     if (!!this._settings.settings.wow[process.platform].env) {
       nativeExecutor.setWowEnv(this._settings.settings.wow[process.platform].env);
     }
@@ -36,7 +49,7 @@ export class Executor {
         }
         throw new Error('Window handler not found');
       })();
-      await pTimeout(1800);
+      await pTimeout(nativeExecutor.getWaitingTime());
       nativeExecutor.writeCredentials();
     } catch (e) {
       console.log(e);
