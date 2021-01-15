@@ -50,7 +50,7 @@ export class DBHandle {
       this._db[name] = {
         email: content.email,
         password: content.password,
-        index: Object.keys(this._db).length
+        index: this._db[name].index || Object.keys(this._db).length
       };
     } else {
       throw new DBControllerNotFoundException("This account is not found, if you want to create it: turn creat parameter to true");
@@ -62,7 +62,9 @@ export class DBHandle {
       this._db[name] = {
         email: content.email,
         password: content.password,
-        index: content.index || Object.keys(this._db).length
+        index: !!Object.keys(content).find(k => k === 'index')
+                  ? content.index
+                  : Object.keys(this._db).length
       };
     } else {
       throw new DBControllerAlreadyExistException("This account already exist");

@@ -150,12 +150,13 @@ export class DB {
             password: payload.password
           }); 
         } else {
-          const { index } = handle.remove(payload.lastName);
+          const { index, password } = handle.getAccount(payload.lastName);
           handle.create(payload.name, {
             email: payload.email,
-            password: payload.password,
+            password: payload.password || password,
             index
-          }); 
+          });
+          handle.remove(payload.lastName);
         }
       }; break;
       case "add": {
