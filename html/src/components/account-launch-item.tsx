@@ -108,7 +108,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           d.style.boxShadow = '';
           d.style.transition = 'box-shadow .2s linear, transform .1s linear';
           d.style.transform = '';
-          setTimeout(() => this.props.onDraggingEnd(), 250);
+          this.props.onDraggingEnd();
         }
       }, 250);
 
