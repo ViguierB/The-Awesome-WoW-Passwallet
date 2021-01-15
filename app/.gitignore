@@ -1,0 +1,13 @@
+/dist/
+/build/
+/node_modules/
+/bin
+/release
+
+accounts.db
+accounts.db.bak
+settings.json
+
+10.*.*/
+/package.json
+/package-lock.json
