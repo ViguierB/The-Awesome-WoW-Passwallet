@@ -19,6 +19,16 @@
             'srcs/native/environ-windows.cc',
           ],
         }],
+        ['OS is "mac"', {
+          'xcode_settings': {
+            'OTHER_CFLAGS': [
+              '-fexceptions',
+              '-Wno-bad-function-cast',
+              '-Wno-missing-field-initializers',
+              '-Wno-deprecated-declarations',
+            ],
+          }
+        }],
         ['OS not in ["mac", "win"]', {
           'sources': [
             'srcs/native/native-executor-linux.cc',
