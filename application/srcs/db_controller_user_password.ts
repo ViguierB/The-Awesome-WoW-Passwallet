@@ -160,7 +160,7 @@ export default class DBControllerUserPassword extends DBController {
       });
 
       ipcMain.on('modal-ask-password-close', (_e, password) => {
-        resolved = false;
+        resolved = true;
         reject({ reason: 'cancel' });
         modal.close();
       });

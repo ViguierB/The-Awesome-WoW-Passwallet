@@ -1,6 +1,6 @@
 import { DB } from "./db";
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import * as fs from 'fs';
+import * as fs from 'original-fs'
 import * as os from 'os';
 import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
 import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';

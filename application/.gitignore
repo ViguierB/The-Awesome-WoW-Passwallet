@@ -1,0 +1,14 @@
+/dist/
+/build/
+/node_modules/
+/bin
+/release
+
+accounts.db
+accounts.db.bak
+settings.json
+*.asar
+
+10.*.*/
+/dist/package.json
+/package-lock.json

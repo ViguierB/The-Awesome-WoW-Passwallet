@@ -27,6 +27,7 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
+      "preLaunchTask": "npm: build-dev",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
       "windows": {
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"

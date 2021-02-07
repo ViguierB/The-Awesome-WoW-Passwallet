@@ -1,139 +1,81 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import * as path from 'path';
-import * as fs from 'fs';
-import { Settings } from './settings';
-import { DB } from './db';
-import DBControllerKeytar, { controllerType as controllerKeytarType } from './db_controller_keytar';
-import DBControllerUserPassword, { controllerType as controllerUserPasswordType } from './db_controller_user_password';
-import { Executor } from './executor';
-import DBController from './db_controller';
-import Misc from './misc';
+import { app, BrowserWindow, shell } from 'electron';
+import LauncherUpdater from "./launcher-updater"
+import FirstInstallWindow from './first-install-window';
 
-const isDev = process.env.IS_DEV === 'true';
+app.whenReady().then(main)
 
-function getFullFileName(base: string) {
-  if (!isDev) {
-    const basePath = path.join(app.getPath('appData'), 'the-awesome-wow-passwallet');
-    if (!fs.existsSync(basePath)) {
-      fs.mkdirSync('basePath');
-    }
-    return path.join(basePath, base);
-  }
-  return base;
-}
-
-const dbFilePath = getFullFileName('accounts.db');
-const settingsFilePath = getFullFileName('settings.json');
-
-function createWindow () {
-  const win = new BrowserWindow({
-    width: 815,
-    height: 430,
-    minWidth: 450,
-    minHeight: 250,
-    show: false,
-    icon: path.resolve(app.getAppPath() + '/icon.png'),
-    webPreferences: {
-      nodeIntegration: true,
-      enableWebSQL: false,
-      webgl: false
-    }
-  });
-
-  const db = new DB(win, dbFilePath);
-  const settings = new Settings(win, db, settingsFilePath);
-  new Misc(win);
-
-  settings.open().catch((e) => {
-    console.error(e);
-    app.quit();
-  }).then(() => {
-
-    const providers = [
-      { type: controllerKeytarType, ctor: DBControllerKeytar },
-      { type: controllerUserPasswordType, ctor: DBControllerUserPassword }
-    ]
-
-    DBController.getProviderCtor(dbFilePath, providers, DBControllerKeytar).then(ctor => {
-      db.changeController(ctor);
-      return db.open();
-    }).catch(e => {
-      db.changeController(DBControllerKeytar);
-      win.once('ready-to-show', () => {
-        setTimeout(win.webContents.send.bind(win.webContents, 'show-toast', {
-          title: 'error',
-          message: 'Cannot open database:\n' + e.message,
-          type: 'error'
-        }), 1000);
-      });
-      fs.unlinkSync(dbFilePath);
-      return db.open();
-    }).then(() => {
-      win.once('ready-to-show', () => {
-        win.show()
-      });
-
-      ipcMain.handle('launch-wow-for-user', async (_e, user: string) => {
-
-          let executor = new Executor(settings, db.getHandle());
-  
-          try {
-            await executor.start(user);
-            // setTimeout(() => global.gc(), 0);
-          } catch (e) {
-            win.webContents.send('show-toast', {
-              title: 'error',
-              message: 'Cannot start World of Warcraft:\n' + e.message,
-              type: 'error'
-            });
-          }
-
-      });
-
-      if (isDev) {
-        win.loadURL('http://localhost:3000/');
-        // win.loadURL(`file://${path.resolve(app.getAppPath(), '../html/build/index.html/')}`);
-
-        if (process.platform === 'win32') {
-          const devtools = new BrowserWindow();
-          win.webContents.setDevToolsWebContents(devtools.webContents)
-          win.webContents.openDevTools({ mode: 'detach' })
-
-          win.on('close', () => {
-            devtools.close();
-          })
-        } else {
-          win.webContents.openDevTools();
-        }
-      } else {
-        win.loadURL(`file://${path.resolve(app.getAppPath(), 'html/build/index.html')}`);
-        win.removeMenu();
-      }
-    }, (_e: any) => {
-      console.error(_e);
-      app.quit();
-    })
-
-    win.on('close', async () => {
-      settings.save()
-      db.save()
-    });
-  })
-
-}
-
-app.whenReady().then(createWindow)
-
-app.on('window-all-closed', () => {
-  setTimeout(() => {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-  }, 250)
-})
+// process.noAsar = true;
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    main()
   }
 })
+
+async function promiseAll<T>(promisesAsObject: {[key: string]: Promise<T>}) {
+  let resolvedPromises = {} as {[key: string]: T};
+  const keys = Object.keys(promisesAsObject);
+  return Promise.all(keys.map(k => promisesAsObject[k])).then(results => {
+    results.forEach((v, i) => {
+      resolvedPromises[keys[i]] = v;
+    })
+    return resolvedPromises;
+  })
+}
+
+async function main() {
+  let lu = new LauncherUpdater({ isDev: process.env.IS_DEV === 'true' });
+
+  app.on('window-all-closed', () => {
+    if (lu.anUpdateIsInstalling()) {
+      return;
+    }
+    setTimeout(() => {
+      if (process.platform !== 'darwin') {
+        app.quit()
+      }
+    }, 250)
+  })
+
+  let launchError = null;
+  await lu.launch().catch(e => launchError = e);
+  if (launchError === 'APP_NOT_INSTALLED') {
+    let win = new FirstInstallWindow();
+    win.start();
+    await lu.processFirstInstall(win.getProgressHandler());
+    win.close();
+    return;
+  }
+
+  try {
+    var updateReport = await lu.getUpdateReport();
+  } catch (e) {
+    console.error("cannot fetch update sheet", e);
+    return;
+  }
+
+  if (process.env.IS_DEV !== 'true') {
+    if (updateReport['container'].aNewVersionIsAvailable === true) {
+      lu.askForContainerUpdade(updateReport['container']).then(response => {
+        if (response === false) { return; }
+        let url = "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet/-/releases"
+        switch (typeof updateReport['container'].url) {
+          case 'object': url = updateReport['container'].url[process.platform as "linux" | "win32"] || url; break;
+          case 'string': url = updateReport['container'].url; break;
+        }
+        shell.openExternal(url)
+        app.quit();
+      })
+    }
+    if (updateReport['app'].aNewVersionIsAvailable === true) {
+      lu.downloadNewAppUpdate(updateReport['app']).then(() => {
+        return lu.askInstanceForApplyAppUpdate(updateReport['app'])
+      }).then((r) => {
+        if (r) {
+          lu.applyPendingUpdate();
+        }
+      })
+
+    }
+  }
+};

@@ -43,7 +43,9 @@ export class Home extends Component<{}, HomeState> {
 
   private async onDbChange() {
     const accounts = await dbService.getDB();
-    this.setState({ accounts: accounts.map(i => Object.assign(i, { key: gen.get() })) });
+    this.setState({ accounts: accounts.map(i => Object.assign(i, {
+      key: this.state.accounts.find(a => a.name === i.name)?.key || gen.get()
+    })) });
   }
 
   onAddButtonClicked() {

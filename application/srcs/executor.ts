@@ -2,7 +2,7 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import { DBHandle } from './db_controller';
 import { Settings } from './settings';
-const { NativeExecutor } = require('bindings')('native_executor');
+const { NativeExecutor } = require('./native_executor.node');
 
 const pTimeout = (t: number) => new Promise((resolve) => setTimeout(resolve, t));
 

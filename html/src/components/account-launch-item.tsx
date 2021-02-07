@@ -63,6 +63,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
 
       //add 'lag' for the dragging
       let timeoutId = setTimeout(() => {
+        d.style.transition = 'box-shadow .2s linear';
         (d.parentElement as HTMLElement).style.zIndex = '1000';
         (d.parentElement as HTMLElement).style.pointerEvents = 'none';
         (d.parentElement as HTMLElement).style.transform = 'scale(1.05)';
@@ -105,6 +106,7 @@ export default class AccountLaunchItem extends Component<AccountLaunchItemProps,
           (d.parentElement as HTMLElement).style.pointerEvents = '';
           (d.parentElement as HTMLElement).style.transform = ''
           d.style.boxShadow = '';
+          d.style.transition = 'box-shadow .2s linear, transform .1s linear';
           d.style.transform = '';
           this.props.onDraggingEnd();
         }

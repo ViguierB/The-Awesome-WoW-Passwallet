@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'original-fs'
 import { BrowserWindow, ipcMain } from "electron";
 import DBController, { DBHandle } from './db_controller';
 import DBControllerUserPassword from './db_controller_user_password';
@@ -150,12 +150,13 @@ export class DB {
             password: payload.password
           }); 
         } else {
-          const { index } = handle.remove(payload.lastName);
+          const { index, password } = handle.getAccount(payload.lastName);
           handle.create(payload.name, {
             email: payload.email,
-            password: payload.password,
+            password: payload.password || password,
             index
-          }); 
+          });
+          handle.remove(payload.lastName);
         }
       }; break;
       case "add": {

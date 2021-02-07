@@ -1,0 +1,19 @@
+{
+  "name": "the-awesome-wow-passwallet-internal-package",
+  "version": "1.0.0",
+  "main": "main.js",
+  "homepage": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.holidev.net/ben/the-awesome-wow-passwallet"
+  },
+  "author": "Ben <ben@holidev.net>",
+  "license": "MIT",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "crypto": "^1.0.1",
+    "keytar": "^7.2.0",
+    "nan": "^2.14.2",
+    "react-jss": "^10.5.0"
+  }
+}
