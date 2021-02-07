@@ -9,11 +9,18 @@ import gen from './misc/very-simple-key-generator';
 import ModalContext from './components/modal-context';
 import ToastContext from './components/toast-context';
 import { SettingsPage } from './pages/settings';
+import miscService from './services/misc-service';
 import {
   BrowserRouter as Router,
   Route,
   Switch,
 } from "react-router-dom";
+
+declare global {
+  interface Window {
+    electron: any;
+  }
+}
 
 const dockItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/', default: true },
@@ -22,9 +29,11 @@ const dockItems = [
 
 class App extends Component<{}, {}> {
   
-  // constructor(props: any) {
-  //   super(props);
-  // }
+  constructor(props: any) {
+    super(props);
+
+    miscService.initUpdateHandler();
+  }
 
   render() {
     const app = (

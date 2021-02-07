@@ -102,6 +102,7 @@ export default class ToastContext extends Component {
   public addToast(toast: React.CElement<ToastItemPropsInternal, ToastItem>) {
     this._subjects.push(toast);
     this.forceUpdate();
+    return toast;
   }
 
   public removeToast(lkey: number) {
