@@ -1,8 +1,25 @@
 # THE AWESOME WOW PASSWALLET
 
+## The Projet
+
 ### A simple launcher for World of Warcraft
 
+It was created to handle multiple accounts for friends who share their accounts.
+
+By clicking on the 'play' button you'll launch wow and your credentials will be magically written into the wow window.
+
 ![alt text][screen1]
+
+### Parts
+
+This repo contains 3 projets
+
+- container: the main program that is located in root directory
+  - Its purpose is to load/update main electron program that is located in the application folder.
+
+- application: the main program that load front end, accounts and handle wow.
+
+- front-end: the front, writen using React it is located in the html folder.
 
 ## How to build
 
@@ -37,7 +54,7 @@ npm run build
 Then go back to the root directory of the project and run:
 
 ```bash
-npm run build-all
+npm run build
 ```
 
 ## Run
@@ -59,18 +76,18 @@ kill $frontpid;
 
 ```bash
 ## build front
-( cd html && npm run build -- --prod )
+( cd html && npm run build )
 
-npm run build-all && npm start;
+npm run build && npm start;
 ```
 
 ## Create Release
 
 ```bash
 ## build front
-( cd html && npm run build -- --prod )
+( cd html && npm run build )
 
-npm run build-all && npm run dist;
+npm run build && npm run dist;
 ```
 
 Release packages can be found in the 'release' folder:
