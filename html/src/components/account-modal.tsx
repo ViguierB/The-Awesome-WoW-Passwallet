@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import { Component } from "react";
 import modalService from '../services/modal-service';
 import { ReactComponent as CloseIcon } from "../assets/close.svg";
