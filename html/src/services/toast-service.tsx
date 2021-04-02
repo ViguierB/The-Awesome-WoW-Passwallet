@@ -103,7 +103,10 @@ class ToastService {
       case 'error': {
         const ref = assingInnerText();
         return <div style={containerStyle}>
-          <ErrorIcon style={iconStyle} />
+          <ErrorIcon style={{
+            ...iconStyle,
+            fill: 'red'
+          }} />
           <span style={textStyle} ref={ref}> </span>
         </div>;
       }
@@ -117,7 +120,10 @@ class ToastService {
       case 'warn': {
         const ref = assingInnerText();
         return <div style={containerStyle}>
-          <WarnIcon style={iconStyle} />
+          <WarnIcon style={{
+            ...iconStyle,
+            fill: 'orange'
+          }} />
           <span style={textStyle} ref={ref}> </span>
         </div>;
       }

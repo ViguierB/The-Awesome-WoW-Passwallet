@@ -114,7 +114,7 @@ export class TheAwesomePasswalletMainWindow {
               this._win.webContents.openDevTools();
             }
           } else {
-            this._win.loadURL(`file://${path.resolve(app.getAppPath(), 'html/build/index.html')}`);
+            this._win.loadFile(require.resolve('./index.html'));
             this._win.removeMenu();
           }
         }, (_e: any) => {

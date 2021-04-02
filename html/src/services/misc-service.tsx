@@ -106,6 +106,10 @@ class MiscService {
     })
   }
 
+  copyToClipboard(text: string) {
+    window.electron.clipboard.writeText(text);
+  }
+
 }
 
 const miscService = new MiscService();

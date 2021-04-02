@@ -60,7 +60,7 @@ export default class AccountLaunchList extends Component<AccountLaunchListProps,
               this.props.items[i2].index = tmp
               
               this.forceUpdate();
-            }} name={ item.name } email={ item.email } isDragging={this.state.isDragging} index={item.index} />
+            }} name={ item.name } email={ item.email } infos={ item.infos } isDragging={this.state.isDragging} index={item.index} />
           </li>
         ))
       }</ul>

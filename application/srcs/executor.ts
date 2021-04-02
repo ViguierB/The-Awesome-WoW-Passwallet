@@ -6,6 +6,8 @@ const { NativeExecutor } = require('./native_executor.node');
 
 const pTimeout = (t: number) => new Promise((resolve) => setTimeout(resolve, t));
 
+const waitTimeBeforeGivingUp = 60 //secondes
+
 export class Executor {
 
   constructor(
@@ -42,7 +44,7 @@ export class Executor {
     try {
       await (async () => {
         let wowReady = false;
-        for (let i = 0; i < 30; ++i) {
+        for (let i = 0; i < waitTimeBeforeGivingUp * 2; ++i) {
           await pTimeout(500);
           wowReady = nativeExecutor.isWoWReady();
           if (wowReady) { return; }
@@ -52,7 +54,7 @@ export class Executor {
       await pTimeout(nativeExecutor.getWaitingTime());
       nativeExecutor.writeCredentials();
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
