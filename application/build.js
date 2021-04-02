@@ -83,6 +83,8 @@ const asar = require('asar');
           }
         }
       })
+
+      fs.copyFileSync('../html/build/index.html', './dist/index.html');
     }
 
     await asar.createPackage('./dist', options.out);

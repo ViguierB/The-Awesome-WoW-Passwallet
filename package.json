@@ -55,13 +55,6 @@
         "to": "dist"
       },
       {
-        "from": "./html/build",
-        "to": "html/build",
-        "filter": [
-          "**/index.html"
-        ]
-      },
-      {
         "from": "resources",
         "to": ".",
         "filter": [
