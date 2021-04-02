@@ -26,6 +26,8 @@ const asar = require('asar');
 
   async function runCommandAsync(command) {
     return new Promise((resolve, reject) => {
+      console.log(command);
+
       const npmInstallProcess = exec(`bash -c '${command}'`);
   
       [ 'stdout', 'stdin', 'stderr' ].forEach(
@@ -65,7 +67,7 @@ const asar = require('asar');
     
     rewritePackageFile();
     await runCommandAsync('cd dist; npm install --only=production');
-    await runCommandAsync('../node_modules/.bin/tsc ');
+    await runCommandAsync('../node_modules/.bin/tsc');
     await runCommandAsync('../node_modules/.bin/electron-rebuild');
     fs.copyFileSync("./build/Release/native_executor.node", "./dist/native_executor.node")
 

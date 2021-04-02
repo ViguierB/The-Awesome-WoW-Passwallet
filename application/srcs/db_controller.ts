@@ -10,6 +10,7 @@ type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 type dbItemType = {
   email: string,
   password: string,
+  infos?: string,
   index?: number
 }
 
@@ -50,6 +51,7 @@ export class DBHandle {
       this._db[name] = {
         email: content.email,
         password: content.password,
+        infos: content.infos,
         index: this._db[name].index || Object.keys(this._db).length
       };
     } else {
@@ -62,6 +64,7 @@ export class DBHandle {
       this._db[name] = {
         email: content.email,
         password: content.password,
+        infos: content.infos,
         index: !!Object.keys(content).find(k => k === 'index')
                   ? content.index
                   : Object.keys(this._db).length
@@ -100,7 +103,8 @@ export class DBHandle {
     return Object.keys(this._db).map(key => ({
       name: key,
       email: this._db[key].email,
-      index: this._db[key].index
+      infos: this._db[key].infos || '',
+      index: this._db[key].index,
     }));
   }
 

@@ -28,9 +28,9 @@
   transition: filter .3s
 } */
 
-#modal-account header .modal-close:hover {
+/* #modal-account header .modal-close:hover {
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, .7));
-}
+} */
 
 #modal-account header .modal-close .icon {
   fill: #872626;
@@ -40,7 +40,46 @@
   display: block;
 }
 
-#modal-account form input {
+#modal-account .password-container {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+#modal-account .password-container input {
+  margin: 0;
+}
+
+#modal-account .show-overlay.hidden {
+  opacity: 0;
+}
+
+#modal-account .show-overlay.over {
+  background-color: #2d4128;
+  color: rgb(157, 218, 97);
+}
+
+#modal-account .show-overlay {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  min-width: 60px;
+  right: 0;
+  top: 0;
+  background-color: #1d1d1d;
+  opacity: 1;
+  cursor: pointer;
+  transition: .33s ease;
+}
+
+#modal-account .show-overlay > * {
+  margin: auto;
+  padding: 0 10px;
+  font-size: smaller;
+}
+
+#modal-account form input, #modal-account form textarea {
   display: block;
   border: none;
   outline: none;
@@ -51,11 +90,13 @@
   margin: 20px 0;
 }
 
-#modal-account form input:not([type="submit"]) {
-  width: 350px;
+#modal-account form input:not([type="submit"]), #modal-account form textarea {
+  max-width: 350px;
+  min-width: 350px;
   background-color: #2f2f2f;
   border-radius: 4px;
-  font-size: initial;
+  font-family: Arial;
+  font-size: inherit;
 }
 
 #modal-account footer {

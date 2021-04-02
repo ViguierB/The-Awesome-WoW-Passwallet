@@ -30,17 +30,21 @@ class DBService {
   }
 
   public async getDB() {
-    return this._ipc.invoke('get-db') as Promise<Array<{name: string, email: string, index: number}>>;
+    return this._ipc.invoke('get-db') as Promise<Array<{name: string, email: string, infos: string, index: number}>>;
   }
 
-  public async addUser(name: string, email: string, password: string) {
-    if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { name, email, password, command: 'add' })
+  public async getUserPassword(username: string) {
+    return this._ipc.invoke('get-user-password', username) as Promise<string>;
   }
 
-  public async updateUser(lastName: string, name: string, email: string, password: string) {
+  public async addUser(name: string, email: string, password: string, infos?: string) {
     if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
-    return this._ipc.invoke('update-db', { lastName, name, email, password, command: 'update' })
+    return this._ipc.invoke('update-db', { name, email, password, infos, command: 'add' })
+  }
+
+  public async updateUser(lastName: string, name: string, email: string, password: string, infos?: string) {
+    if (this._dbIsOpen === false) { throw new Error("DB not opened !") }
+    return this._ipc.invoke('update-db', { lastName, name, email, password, infos, command: 'update' })
   }
 
   public async updateSorting(sortArray: {name: string, index: number}[]) {

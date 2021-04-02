@@ -39,7 +39,10 @@
         "ELECTRON_ENABLE_STACK_DUMPING": "true",
         "ELECTRON_RUN_AS_NODE": ""
       },
-      "outputCapture": "std"
+      "outputCapture": "std",
+      "sourceMapPathOverrides": {
+        "@application/": "${workspaceRoot}/application/srcs",
+      }
     },
     {
       "name": "(gdb) Launch",

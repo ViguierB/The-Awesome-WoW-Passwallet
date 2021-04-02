@@ -5,7 +5,7 @@ import DBControllerUserPassword from './db_controller_user_password';
 
 export class DB {
 
-  private _handle: any = null;
+  private _handle!: DBHandle;
   private _db: DBController;
 
   constructor(private _win: BrowserWindow, private _filename: string) {
@@ -28,20 +28,24 @@ export class DB {
       throw new Error('DBController not init');
     }
 
-    const handle = await this._db.open(this._filename);
-    this._handle = handle;
+    let handle: DBHandle| null = await this._db.open(this._filename);
+    this._handle = handle!;
+    handle = null as any; // DO NOT USE THIS VAR ANYMORE
     ipcMain.on('on-ipc-service-ready', () => {
       this._win.webContents.send('on-db-opened');
     });
     ipcMain.handle('get-db', async (_event, _someArgument) => {
       return this._handle.getArrayForRender();
     });
+    ipcMain.handle('get-user-password', async (_event, accountName) => {
+      return this._handle.getAccount(accountName).password;
+    });
     ipcMain.handle('update-db', (e, p) => {
       try {
         this._updateDBEvent(this._handle, e, p);
         return { error: false }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         let message = (e instanceof Error) ? e.message : e.getLocalMessage();
         return { error: true, message: message }
       }
@@ -76,7 +80,7 @@ export class DB {
     await new Promise((resolve, reject) => {
       fs.access(filepath, fs.constants.R_OK, (err) => {
         if (!!err) {
-          console.log(err);
+          console.error(err);
           switch (err.code) {
             case 'ENOENT': reject('File not found'); break;
             case 'EACCES': reject('You do not have the rights to read this file'); break;
@@ -147,13 +151,15 @@ export class DB {
         if (payload.name === payload.lastName) {
           handle.updateAccount(payload.name, {
             email: payload.email,
-            password: payload.password
+            password: payload.password,
+            infos: payload.infos,
           }); 
         } else {
           const { index, password } = handle.getAccount(payload.lastName);
           handle.create(payload.name, {
             email: payload.email,
             password: payload.password || password,
+            infos: payload.infos,
             index
           });
           handle.remove(payload.lastName);
@@ -163,7 +169,8 @@ export class DB {
         this._checkFields(payload, true);
         handle.create(payload.name, {
           email: payload.email,
-          password: payload.password
+          password: payload.password,
+          infos: payload.infos,
         }); 
       }; break;
       case "remove": {
@@ -173,7 +180,7 @@ export class DB {
       case "update-sorting": {
         handle.applySort(payload.sortArray)
       }; break;
-      default: console.error("unkown payload command"); break;
+      default: console.error("unknown payload command"); break;
     }
     this.save();
     this._win.webContents.send('on-db-edited');

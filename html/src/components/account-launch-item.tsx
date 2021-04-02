@@ -10,7 +10,7 @@ import AccountDeleteModal from "./account-delete-modal";
 import executorService from '../services/executor-service';
 
 export type AccountLaunchItemPropsBase = {
-  name: string, email: string, index: number
+  name: string, email: string, infos?: string, index: number
 }
 
 type AccountLaunchItemProps = AccountLaunchItemPropsBase & {
